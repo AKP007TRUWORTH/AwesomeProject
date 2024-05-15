@@ -93,13 +93,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.awesomeproject"
+    namespace 'com.akp007.awesomeproject'
     defaultConfig {
-        applicationId "com.awesomeproject"
+        applicationId 'com.akp007.awesomeproject'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "0.0.1"
     }
 
     splits {
