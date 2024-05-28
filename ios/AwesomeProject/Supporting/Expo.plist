@@ -8,9 +8,14 @@
     <true/>
     <key>EXUpdatesLaunchWaitMs</key>
     <integer>0</integer>
+    <key>EXUpdatesRequestHeaders</key>
+    <dict>
+      <key>expo-channel-name</key>
+      <string>main</string>
+    </dict>
     <key>EXUpdatesRuntimeVersion</key>
     <string>1.0.0</string>
     <key>EXUpdatesURL</key>
-    <string>https://u.expo.dev/12db7102-c890-41d6-9c32-7b03482a524c</string>
+    <string>https://u.expo.dev/12db7102-c890-41d6-9c32-7b03482a524c?runtime-version=1.0.0&amp;channel-name=development&amp;platform=android</string>
   </dict>
 </plist>
