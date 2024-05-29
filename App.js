@@ -34,7 +34,7 @@ const App = () => {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Button title='Check For Update' onPress={checkForUpdates} />
       <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginTop: 20 }}>
-        New Update from version 5.0 to 6.1
+        New Update from version 7.0 to 8.0
       </Text>
     </View>
   )

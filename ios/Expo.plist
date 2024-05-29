@@ -4,7 +4,7 @@
    Expo.plist
    AwesomeProject
 
-   Created by Testing Soft1 on 28/05/24.
+   Created by Testing Soft1 on 29/05/24.
    Copyright (c) 2024 ___ORGANIZATIONNAME___. All rights reserved.
 -->
 <plist version="1.0">
@@ -18,6 +18,11 @@
       <key>EXUpdatesRuntimeVersion</key>
       <string>1.0.0</string>
       <key>EXUpdatesURL</key>
-      <string>https://u.expo.dev/12db7102-c890-41d6-9c32-7b03482a524c?runtime-version=1.0.0&channel-name=development&platform=ios</string>
+      <string>https://u.expo.dev/12db7102-c890-41d6-9c32-7b03482a524c</string>
+      <key>EXUpdatesRequestHeaders</key>
+      <dict>
+        <key>expo-channel-name</key>
+        <string>development</string>
+      </dict>
     </dict>
 </plist>
