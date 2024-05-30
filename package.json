@@ -10,6 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@expo/config": "9.0.2",
+    "dotenv": "16.4.5",
     "expo": "~48.0.21",
     "expo-splash-screen": "0.18.2",
     "expo-status-bar": "1.4.4",
@@ -26,6 +28,7 @@
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^29.2.1",
     "@types/react": "^18.0.24",
+    "@types/react-native-dotenv": "^0.2.2",
     "@types/react-test-renderer": "^18.0.0",
     "babel-jest": "^29.2.1",
     "eslint": "^8.19.0",

@@ -3,25 +3,13 @@
   "displayName": "AwesomeProject",
   "expo": {
     "jsEngine": "hermes",
-    "extra": {
-      "eas": {
-        "projectId": "12db7102-c890-41d6-9c32-7b03482a524c"
-      }
-    },
     "runtimeVersion": "1.0.0",
     "updates": {
       "enabled": true,
-      "checkAutomatically": "ON_LOAD",
-      "url": "https://u.expo.dev/12db7102-c890-41d6-9c32-7b03482a524c?runtime-version=1.0.0&channel-name=development&platform=android",
-      "requestHeaders": {
-        "expo-channel-name": "development"
-      }
+      "checkAutomatically": "ON_LOAD"
     },
     "android": {
       "package": "com.akp007.awesomeproject"
-    },
-    "ios": {
-      "bundleIdentifier": "com.akp007.awesomeproject"
     },
     "version": "1.0.0"
   },
