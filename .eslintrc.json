@@ -1,0 +1,36 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        // "plugin:react/recommended",
+        "@react-native-community"
+    ],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "prettier/prettier": "off",
+        "semi": "off",
+        "comma-dangle": "off",
+        "react-native/no-inline-styles": 0,
+        "quotes": "off",
+        "jsx-quotes": "off",
+        "no-shadow": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "react/no-unescaped-entities": "off",
+        "react/no-unstable-nested-components": "off",
+        "curly": "off",
+        "eol-last": "off",
+        "eqeqeq": "off"
+    }
+}
