@@ -11,7 +11,6 @@ export default () => {
         try {
             const update = await Updates.checkForUpdateAsync()
             if (update.isAvailable) {
-                await Updates.fetchUpdateAsync()
                 setRestartRequired(true)
             }
         } catch (err) {
@@ -58,9 +57,10 @@ export default () => {
                                     width: '45%',
                                     borderWidth: 0
                                 }}
-                                onPress={() => {
+                                onPress={async () => {
                                     setRestartRequired(false)
-                                    Updates.reloadAsync()
+                                    await Updates.fetchUpdateAsync()
+                                    await Updates.reloadAsync()
                                 }}>
                                 Update
                             </Button>

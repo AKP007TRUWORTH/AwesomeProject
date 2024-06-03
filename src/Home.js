@@ -8,27 +8,26 @@ const Home = () => {
         try {
             const update = await Updates.checkForUpdateAsync()
             if (update.isAvailable) {
-                await Updates.fetchUpdateAsync()
-                Alert.alert(
+                return Alert.alert(
                     'Truworth Wellness',
                     'An update is available. Would you like to install it now?',
                     [
                         { text: 'No' },
                         {
                             text: 'Yes',
-                            onPress: () => {
-                                Updates.reloadAsync()
+                            onPress: async () => {
+                                await Updates.fetchUpdateAsync()
+                                await Updates.reloadAsync()
                             }
                         },
                     ],
                     { cancelable: false }
                 )
-            } else {
-                Alert.alert(
-                    'No update available',
-                    'The latest version is already installed on your device.'
-                )
             }
+            Alert.alert(
+                'No update available',
+                'The latest version is already installed on your device.'
+            )
         } catch (error) {
             alert(`Error fetching latest update: ${error}`)
         }
