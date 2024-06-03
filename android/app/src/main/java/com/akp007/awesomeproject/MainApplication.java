@@ -2,6 +2,8 @@ package com.akp007.awesomeproject;
 import android.content.res.Configuration;
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
+import live.videosdk.rnfgservice.ForegroundServicePackage;
+import live.videosdk.rnwebrtc.WebRTCModulePackage;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
@@ -28,6 +30,8 @@ public class MainApplication extends Application implements ReactApplication {
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
+            packages.add(new ForegroundServicePackage());
+            packages.add(new WebRTCModulePackage());
           return packages;
         }
 

@@ -1,8 +1,9 @@
-import { Text, View, Button, Alert } from 'react-native'
+import { Text, View, Alert } from 'react-native'
+import { Button } from '@ui-kitten/components'
 import React from 'react'
 import * as Updates from 'expo-updates'
 
-const Home = () => {
+const Home = ({ navigation }) => {
 
     const checkForUpdates = async () => {
         try {
@@ -35,11 +36,21 @@ const Home = () => {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Button title='Check For Update' onPress={checkForUpdates} />
-            <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginTop: 20 }}>
+            <Button
+                activeOpacity={0.8}
+                onPress={checkForUpdates} >
+                Check For Update
+            </Button>
+            <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
                 Code push version 1.0 🚀
             </Text>
-        </View>
+            <Button
+                activeOpacity={0.8}
+                onPress={() => navigation.navigate('VideoSdkNavigator')}
+            >
+                Video package work Click me! 🎥
+            </Button>
+        </View >
     )
 }
 
