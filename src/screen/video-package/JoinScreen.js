@@ -31,6 +31,10 @@ const JoinScreen = (props) => {
                         onChangeText={setMeetingVal}
                         placeholder={"Enter Your Meeting ID"}
                         style={{ borderWidth: 1, borderRadius: 6 }}
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        keyboardType='default'
+                        autoComplete='off'
                     />
 
                     <TouchableOpacity

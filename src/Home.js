@@ -42,7 +42,7 @@ const Home = ({ navigation }) => {
                 Check For Update
             </Button>
             <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
-                Code push version 1.0 🚀
+                Code push version 2.0 🚀
             </Text>
             <Button
                 activeOpacity={0.8}
