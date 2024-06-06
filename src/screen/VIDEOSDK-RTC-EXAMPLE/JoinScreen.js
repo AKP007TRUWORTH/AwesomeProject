@@ -11,9 +11,10 @@ import { CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './asset
 import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
 import TextInputContainer from './components/TextInputContainer'
-import { VIDEOSDK_TOKEN } from './helper/environment'
+import { VIDEO_SDK_TOKEN } from './helper/environment'
 import colors from './styles/colors'
 import OneToOneMeetingViewer from './meeting/OneToOne/OneToOneMeetingViewer'
+import { isIphoneX } from '../../helpers/iPhoneX'
 
 const JoinScreen = () => {
     const [videoOn, setVideoOn] = useState(false)
@@ -142,7 +143,7 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
         <View style={{ flex: 1, paddingTop: '5%' }}>
             <View style={{ flex: 1, width: '80%', alignSelf: 'center' }}>
                 <View style={{
-                    flex: 1, borderRadius: 12, overflow: 'hidden',
+                    flex: 1, overflow: 'hidden',
                     borderRadius: 20, borderColor: '#D8D8D8', backgroundColor: '#FFFFFF', borderWidth: 1,
                     elevation: 12, shadowColor: '#24292E', shadowOpacity: 0.25, shadowRadius: 3.84,
                 }}>
@@ -214,13 +215,13 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
 const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) => {
     const [isVisibleCreateMeetingContainer, setIsVisibleCreateMeetingContainer] = useState(false)
     const [isVisibleJoinMeetingContainer, setIsVisibleJoinMeetingContainer] = useState(false)
-    const [showDropDown, toogelDropDown] = useState(false)
+    const [showDropDown, toggleDropDown] = useState(false)
 
     const [name, setName] = useState('')
     const [meetingId, setMeetingId] = useState('')
     const [meetingType, setMeetingType] = useState(meetingTypes[0])
 
-    const naviagtion = useNavigation()
+    const navigation = useNavigation()
 
     useFocusEffect(
         useCallback(() => {
@@ -260,13 +261,13 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                             shadowColor: '#CED2D6', shadowOpacity: 0.15,
                         }}
                         onSelect={(index) => {
-                            toogelDropDown(false)
+                            toggleDropDown(false)
                             setMeetingType(meetingTypes[index.row])
                         }}
                         anchor={() =>
                             <TouchableOpacity
                                 activeOpacity={0.8}
-                                onPress={() => toogelDropDown(!showDropDown)}
+                                onPress={() => toggleDropDown(!showDropDown)}
                                 style={{
                                     height: 50,
                                     justifyContent: "center",
@@ -303,12 +304,12 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                             if (name.length <= 0) {
                                 return Toast.show("Enter your name")
                             }
-                            let meetingId = await createMeeting({ token: VIDEOSDK_TOKEN })
+                            let meetingId = await createMeeting({ token: VIDEO_SDK_TOKEN })
 
                             disposeVideoTrack()
-                            naviagtion.navigate('MeetingScreen', {
+                            navigation.navigate('MeetingScreen', {
                                 name: name.trim(),
-                                token: VIDEOSDK_TOKEN,
+                                token: VIDEO_SDK_TOKEN,
                                 meetingId,
                                 micEnabled: micOn,
                                 webCamEnabled: videoOn,
@@ -330,14 +331,13 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 shadowColor: '#CED2D6', shadowOpacity: 0.15,
                             }}
                             onSelect={(index) => {
-                                console.log(index);
-                                toogelDropDown(false)
+                                toggleDropDown(false)
                                 setMeetingType(meetingTypes[index.row].value)
                             }}
                             anchor={() =>
                                 <TouchableOpacity
                                     activeOpacity={0.8}
-                                    onPress={() => toogelDropDown(!showDropDown)}
+                                    onPress={() => toggleDropDown(!showDropDown)}
                                     style={{
                                         height: 50,
                                         justifyContent: "center",
@@ -385,15 +385,15 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 }
 
                                 let validMeetingCode = await validateMeeting({
-                                    token: VIDEOSDK_TOKEN,
+                                    token: VIDEO_SDK_TOKEN,
                                     meetingId: meetingId.trim()
                                 })
 
                                 if (validMeetingCode) {
                                     disposeVideoTrack()
-                                    naviagtion.navigate('MeetingScreen', {
+                                    navigation.navigate('MeetingScreen', {
                                         name: name.trim(),
-                                        token: VIDEOSDK_TOKEN,
+                                        token: VIDEO_SDK_TOKEN,
                                         meetingId,
                                         micEnabled: micOn,
                                         webCamEnabled: videoOn,
@@ -423,7 +423,7 @@ const AudioListBottomSheet = ({ audioList, toggleAudioList, audioListVisible }) 
     return (
         <BottomSheet
             visible={audioListVisible}
-            titile={'Device Audio List'}
+            title={'Device Audio List'}
             childrenStyle={{ padding: 16 }}
             flatListProps={{
                 data: audioList,

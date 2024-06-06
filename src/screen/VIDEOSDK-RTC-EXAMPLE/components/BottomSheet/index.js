@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import { Modalize } from 'react-native-modalize'
 
-const BottomSheet = ({ visible, hide, titile, children, childrenStyle, ...props }) => {
+const BottomSheet = ({ visible, hide, title, children, childrenStyle, ...props }) => {
 
     const modalizeRef = useRef(null)
 
@@ -17,7 +17,7 @@ const BottomSheet = ({ visible, hide, titile, children, childrenStyle, ...props 
             HeaderComponent={
                 <>
                     <Text style={{ fontSize: 16, color: 'black', fontWeight: 'bold', textAlign: 'center', margin: 16 }}>
-                        {titile}
+                        {title}
                     </Text>
                     <View style={{ height: 1, backgroundColor: '#E5E7EA', width: '100%' }} />
                 </>

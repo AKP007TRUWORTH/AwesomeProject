@@ -1,11 +1,24 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
+import MiniVideoRTCView from './MiniVideoRTCView'
+import { useParticipant } from '@videosdk.live/react-native-sdk'
 
-const MiniViewContainer = () => {
+const MiniViewContainer = ({ participantId, openStatsBottomSheet }) => {
+    const { webcamOn, webcamStream, displayName, setQuality, isLocal, micOn } = useParticipant(participantId, {})
+
+    useEffect(() => {
+        setQuality('high')
+    }, [])
+
     return (
-        <View>
-            <Text>index</Text>
-        </View>
+        <MiniVideoRTCView
+            isOn={webcamOn}
+            stream={webcamStream}
+            displayName={displayName}
+            isLocal={isLocal}
+            micOn={micOn}
+            participantId={participantId}
+            openStatsBottomSheet={openStatsBottomSheet}
+        />
     )
 }
 

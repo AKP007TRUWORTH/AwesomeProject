@@ -1,11 +1,13 @@
-import { View, Text } from 'react-native'
 import React from 'react'
+import LargeVideoRTCView from './LargeVideoRTCView'
 
 const LargeViewContainer = () => {
+
     return (
-        <View>
-            <Text>index</Text>
-        </View>
+        <LargeVideoRTCView
+
+
+        />
     )
 }
 

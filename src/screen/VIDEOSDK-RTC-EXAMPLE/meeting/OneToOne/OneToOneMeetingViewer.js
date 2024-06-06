@@ -30,54 +30,53 @@ const OneToOneMeetingViewer = () => {
     const isRecordingState = true
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-            {isRecordingState &&
-                <View>
-                    <Blink ref={recordingRef} duration={500}>
-                        <LottieView
-                            source={RecordingAnimation}
-                            autoPlay
-                            loop
-                            style={{ width: 50, height: 30 }}
-                        />
-                    </Blink>
-                </View>
-            }
+        <>
+            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                {isRecordingState &&
+                    <View>
+                        <Blink ref={recordingRef} duration={500}>
+                            <LottieView
+                                source={RecordingAnimation}
+                                autoPlay
+                                loop
+                                style={{ width: 50, height: 30 }}
+                            />
+                        </Blink>
+                    </View>
+                }
 
-            <View style={{ flex: 1, justifyContent: 'space-between', marginLeft: isRecordingState ? 8 : 0 }}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={{ fontSize: 16, color: 'black' }}>
-                        {/* {meetingId ? meetingId : "xxxx-xxxx-xxxx"} */}
-                    </Text>
+                <View style={{ flex: 1, justifyContent: 'space-between', marginLeft: isRecordingState ? 8 : 0 }}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={{ fontSize: 16, color: 'black' }}>
+                            {/* {meetingId ? meetingId : "xxxx-xxxx-xxxx"} */}
+                        </Text>
 
-                    <TouchableOpacity
-                        activeOpacity={0.5}
-                        style={{ justifyContent: 'center', marginLeft: 10 }}
-                        onPress={() => {
-                            Toast.show("Meeting Id copied Successfully")
-                        }}
-                    >
-                        <Copy fill={'black'} width={18} height={18} />
-                    </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            style={{ justifyContent: 'center', marginLeft: 10 }}
+                            onPress={() => {
+                                Toast.show("Meeting Id copied Successfully")
+                            }}
+                        >
+                            <Copy fill={'black'} width={18} height={18} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
+
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => { }}
+                >
+                    <CameraSwitch height={22} width={22} fill={'black'} />
+                </TouchableOpacity>
             </View>
 
-
-            <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => { }}
-            >
-                <CameraSwitch height={22} width={22} fill={'black'} />
-
-            </TouchableOpacity>
-
             <ParticipantComponent />
-
-        </View>
+        </>
     )
 }
 
-const ParticipantComponent = ({ participantCount = 2, localScreenShareOn = true, participantIds }) => {
+const ParticipantComponent = ({ participantCount = 2, localScreenShareOn = true, participantIds = [] }) => {
 
     const openStateBottomSheet = () => {
 
@@ -92,9 +91,9 @@ const ParticipantComponent = ({ participantCount = 2, localScreenShareOn = true,
 
                     <MiniViewContainer
                         openStateBottomSheet={openStateBottomSheet}
-                        participantId={
-                            participantIds[localScreenShareOn || presenterId ? 1 : 0]
-                        }
+                    // participantId={
+                    //     participantIds[localScreenShareOn || presenterId ? 1 : 0]
+                    // }
                     />
                 </>
                 : participantCount === 1 ?
