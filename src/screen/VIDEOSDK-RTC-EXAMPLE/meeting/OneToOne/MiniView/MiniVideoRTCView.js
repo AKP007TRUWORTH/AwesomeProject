@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const MeetingScreen = () => {
+const MiniVideoRTCView = () => {
     return (
         <View>
-            <Text>MeetingScreen</Text>
+            <Text>MiniVideoRTCView</Text>
         </View>
     )
 }
 
-export default MeetingScreen
+export default MiniVideoRTCView

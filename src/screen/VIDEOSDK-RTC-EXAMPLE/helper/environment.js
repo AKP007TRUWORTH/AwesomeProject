@@ -1,0 +1,2 @@
+export const API_BASE_URL = "https://api.videosdk.live/v2";
+export const VIDEOSDK_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlrZXkiOiJlYTVkNjMwMC1jYTA3LTRlNzctYjY3Ni03MGVlZTUzNjIzNWMiLCJwZXJtaXNzaW9ucyI6WyJhbGxvd19qb2luIl0sImlhdCI6MTcxNzQxMjU2MywiZXhwIjoxNzE4MDE3MzYzfQ.v9b2TtYGEt3tL_LhFG8vq6OQu88Ux2TdinkHKU8cjeA"
