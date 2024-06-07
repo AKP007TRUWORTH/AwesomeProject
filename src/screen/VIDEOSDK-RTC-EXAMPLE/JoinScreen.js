@@ -3,18 +3,18 @@ import { Layout, MenuItem, OverflowMenu } from '@ui-kitten/components'
 import { createCameraVideoTrack, RTCView, switchAudioDevice, useMediaDevice } from '@videosdk.live/react-native-sdk'
 import _ from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
-import { BackHandler, Dimensions, Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, Dimensions, Image, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import { createMeeting, validateMeeting } from './api/create-meeting'
-import { CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
+import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
 import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
 import TextInputContainer from './components/TextInputContainer'
 import { VIDEO_SDK_TOKEN } from './helper/environment'
 import colors from './styles/colors'
-import OneToOneMeetingViewer from './meeting/OneToOne/OneToOneMeetingViewer'
 import { isIphoneX } from '../../helpers/iPhoneX'
+import { widthPercentageToDP as wp } from '../../helpers/Responsive'
 
 const JoinScreen = () => {
     const [videoOn, setVideoOn] = useState(false)
@@ -66,7 +66,7 @@ const JoinScreen = () => {
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1, padding: 16 }}
                 >
-                    {/* <HeaderComponent {...{
+                    <HeaderComponent {...{
                         setFacingMode, setAudioList, disposeVideoTrack, toggleAudioList
                     }} />
 
@@ -76,9 +76,7 @@ const JoinScreen = () => {
 
                     <BottomViewComponent {...{
                         disposeVideoTrack, micOn, videoOn, facingMode
-                    }} /> */}
-
-                    <OneToOneMeetingViewer />
+                    }} />
 
                 </ScrollView>
             </CustomKeyboardAvoidingView>
@@ -91,6 +89,8 @@ const JoinScreen = () => {
 }
 
 const HeaderComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggleAudioList }) => {
+
+    const navigation = useNavigation()
 
     const { getAudioDeviceList } = useMediaDevice()
 
@@ -114,22 +114,48 @@ const HeaderComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggl
 
     return (
         <View style={{
-            flexDirection: 'row', justifyContent: "flex-end", alignItems: 'center',
-            padding: 16, gap: 8
+            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+            padding: 16,
         }}>
 
-            <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={handleAudioButtonPress}
+            <Pressable
+                style={({ pressed }) => ({
+                    backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
+                    alignItems: 'center', justifyContent: 'center',
+                    padding: 8, borderRadius: 20
+
+                })}
+                onPress={() => navigation.goBack()}
             >
-                <Speaker fill="black" width={25} height={25} />
-            </TouchableOpacity>
-            <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={handleCameraButtonPress}
-            >
-                <CameraSwitch fill="black" width={25} height={25} />
-            </TouchableOpacity>
+                <ArrowIcon fill="white" width={18} height={18} />
+            </Pressable>
+
+            <View style={{ flexDirection: 'row', gap: 16 }}>
+
+                <Pressable
+                    style={({ pressed }) => ({
+                        backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
+                        alignItems: 'center', justifyContent: 'center',
+                        padding: 8, borderRadius: 20
+
+                    })}
+                    onPress={handleAudioButtonPress}
+                >
+                    <Speaker fill="white" width={18} height={18} />
+                </Pressable>
+
+                <Pressable
+                    style={({ pressed }) => ({
+                        backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
+                        alignItems: 'center', justifyContent: 'center',
+                        padding: 8, borderRadius: 20
+
+                    })}
+                    onPress={handleCameraButtonPress}
+                >
+                    <CameraSwitch fill="white" width={18} height={18} />
+                </Pressable>
+            </View>
         </View>
     )
 }
@@ -140,12 +166,13 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
     if (!tracks) return null
 
     return (
-        <View style={{ flex: 1, paddingTop: '5%' }}>
+        <View style={{ height: wp(120), paddingTop: '5%' }}>
             <View style={{ flex: 1, width: '80%', alignSelf: 'center' }}>
                 <View style={{
                     flex: 1, overflow: 'hidden',
                     borderRadius: 20, borderColor: '#D8D8D8', backgroundColor: '#FFFFFF', borderWidth: 1,
-                    elevation: 12, shadowColor: '#24292E', shadowOpacity: 0.25, shadowRadius: 3.84,
+                    elevation: 12, shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25,
+                    shadowRadius: 12, shadowColor: '#A6A6A6',
                 }}>
                     {videoOn && tracks
                         ?
@@ -156,15 +183,11 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
                             style={{ flex: 1, borderRadius: 20 }}
                         />
                         :
-                        <View style={{
-                            flex: 1, justifyContent: 'center', alignItems: 'center',
-                            padding: 12, backgroundColor: '#4890E0'
-                        }}>
-                            <Image
-                                source={require('./assets/images/male.jpg')}
-                                resizeMode='contain' style={{ width: '100%', height: '100%' }}
-                            />
-                        </View>
+                        <Image
+                            resizeMode='contain'
+                            source={require('./assets/images/male.jpg')}
+                            style={{ width: '100%', height: '100%', }}
+                        />
                     }
                     <View style={{
                         flexDirection: 'row', position: 'absolute', backgroundColor: 'transparent',
@@ -255,7 +278,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                     <OverflowMenu
                         visible={showDropDown}
                         style={{
-                            marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : wp('-5%') : 5,
+                            marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : 5 : 5,
                             width: Dimensions.get('window').width - 100, paddingHorizontal: 16, paddingVertical: 8,
                             borderRadius: 8, elevation: 3, shadowOffset: { width: 0, height: 0 },
                             shadowColor: '#CED2D6', shadowOpacity: 0.15,
@@ -325,14 +348,14 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                         <OverflowMenu
                             visible={showDropDown}
                             style={{
-                                marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : wp('-5%') : 5,
+                                marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : 5 : 5,
                                 width: Dimensions.get('window').width - 100, paddingHorizontal: 16, paddingVertical: 8,
                                 borderRadius: 8, elevation: 3, shadowOffset: { width: 0, height: 0 },
                                 shadowColor: '#CED2D6', shadowOpacity: 0.15,
                             }}
                             onSelect={(index) => {
                                 toggleDropDown(false)
-                                setMeetingType(meetingTypes[index.row].value)
+                                setMeetingType(meetingTypes[index.row])
                             }}
                             anchor={() =>
                                 <TouchableOpacity
@@ -352,7 +375,6 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                     </Text>
                                 </TouchableOpacity>
                             }
-
                         >
                             {meetingTypes.map((item, index) => (
                                 <MenuItem
@@ -394,7 +416,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                     navigation.navigate('MeetingScreen', {
                                         name: name.trim(),
                                         token: VIDEO_SDK_TOKEN,
-                                        meetingId,
+                                        meetingId: meetingId.trim(),
                                         micEnabled: micOn,
                                         webCamEnabled: videoOn,
                                         meetingType: meetingType.key,

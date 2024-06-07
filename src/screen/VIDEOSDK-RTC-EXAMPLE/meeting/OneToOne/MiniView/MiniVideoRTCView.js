@@ -14,11 +14,11 @@ const MiniVideoRTCView = ({ isOn, stream, displayName, isLocal, micOn, participa
         <View style={{ position: 'absolute', bottom: 10, right: 10, height: 160, aspectRatio: 0.7, borderRadius: 14, backgroundColor: '#FF0000', overflow: 'hidden' }}>
             {isOn && stream ?
                 <RTCView
-                    objectFit='cover'
+                    objectFit={'cover'}
                     zOrder={1}
                     mirror={isLocal ? true : false}
                     style={{ flex: 1, backgroundColor: '#424242' }}
-                    streamURL={new MediaStream([stream.track]).toURL}
+                    streamURL={new MediaStream([stream.track]).toURL()}
                 />
                 :
                 <Avatar

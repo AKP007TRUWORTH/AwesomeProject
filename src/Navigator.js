@@ -6,7 +6,6 @@ import Home from './Home'
 // import VideoSdkNavigator from './screen/video-package/Navigator'
 import VideoSdkNavigator from './screen/VIDEOSDK-RTC-EXAMPLE/Navigator'
 
-
 const { Navigator, Screen } = createNativeStackNavigator()
 
 export const AppNavigator = () => {

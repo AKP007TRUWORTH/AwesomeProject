@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Layout } from '@ui-kitten/components'
 import { MeetingConsumer, MeetingProvider, ReactNativeForegroundService, useMeeting } from '@videosdk.live/react-native-sdk'
+
 import WaitingToJoinView from './components/WaitingToJoinView'
 import ConferenceMeetingViewer from './conference/ConferenceMeetingViewer'
 import ParticipantLimitViewer from './OneToOne/ParticipantLimitViewer'
@@ -90,7 +90,9 @@ const MeetingContainer = ({ webcamEnabled, meetingType }) => {
     return isJoined
         ? meetingType === "GROUP"
             ? <ConferenceMeetingViewer />
-            : participantLimit ? <ParticipantLimitViewer /> : <OneToOneMeetingViewer />
+            : participantLimit
+                ? <ParticipantLimitViewer />
+                : <OneToOneMeetingViewer />
         : <WaitingToJoinView />
 }
 

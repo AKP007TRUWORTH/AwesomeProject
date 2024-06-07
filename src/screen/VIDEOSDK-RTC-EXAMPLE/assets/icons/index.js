@@ -20,6 +20,7 @@ import Person from "./Person";
 import Send from "./Send";
 import NetworkIcon from "./NetworkIcon";
 import Speaker from "./Speaker";
+import ArrowIcon from "./ArrowIcon";
 
 
 export {
@@ -42,5 +43,6 @@ export {
   Recording,
   Participants,
   NetworkIcon,
-  Speaker
+  Speaker,
+  ArrowIcon
 };
