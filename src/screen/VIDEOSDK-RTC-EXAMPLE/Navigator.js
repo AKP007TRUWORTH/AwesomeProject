@@ -1,8 +1,9 @@
 import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import JoinScreen from './JoinScreen'
-import MeetingScreen from './meeting/MeetingScreen'
+
 import { VideoSdkProvider } from './context/VideoSdkContext'
+import MeetingScreen from './meeting/MeetingScreen'
+import JoinScreen from './JoinScreen'
 
 const { Navigator, Screen } = createNativeStackNavigator()
 

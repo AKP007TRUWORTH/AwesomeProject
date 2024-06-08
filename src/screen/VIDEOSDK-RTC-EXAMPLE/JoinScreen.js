@@ -1,28 +1,32 @@
+import React, { useCallback, useEffect, useState } from 'react'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { Layout, MenuItem, OverflowMenu } from '@ui-kitten/components'
 import { createCameraVideoTrack, RTCView, switchAudioDevice, useMediaDevice } from '@videosdk.live/react-native-sdk'
-import _ from 'lodash'
-import React, { useCallback, useEffect, useState } from 'react'
 import { BackHandler, Dimensions, Image, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
+
+import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import { createMeeting, validateMeeting } from './api/create-meeting'
-import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
+import { widthPercentageToDP as wp } from '../../helpers/Responsive'
+import { VIDEO_SDK_TOKEN } from './helper/environment'
+import { isIphoneX } from '../../helpers/iPhoneX'
+
+import TextInputContainer from './components/TextInputContainer'
 import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
-import TextInputContainer from './components/TextInputContainer'
-import { VIDEO_SDK_TOKEN } from './helper/environment'
 import colors from './styles/colors'
-import { isIphoneX } from '../../helpers/iPhoneX'
-import { widthPercentageToDP as wp } from '../../helpers/Responsive'
+import _ from 'lodash'
+import OneToOneMeetingViewer from './meeting/OneToOne/OneToOneMeetingViewer'
 
 const JoinScreen = () => {
-    const [videoOn, setVideoOn] = useState(false)
     const [micOn, setMicOn] = useState(false)
+    const [videoOn, setVideoOn] = useState(false)
     const [audioListVisible, showAudioListVisible] = useState(false)
 
     const [tracks, setTrack] = useState("")
     const [facingMode, setFacingMode] = useState("user")
+
     const [audioList, setAudioList] = useState([])
 
     useFocusEffect(
@@ -66,7 +70,7 @@ const JoinScreen = () => {
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ flexGrow: 1, padding: 16 }}
                 >
-                    <HeaderComponent {...{
+                    <HeaderViewComponent {...{
                         setFacingMode, setAudioList, disposeVideoTrack, toggleAudioList
                     }} />
 
@@ -88,11 +92,10 @@ const JoinScreen = () => {
     )
 }
 
-const HeaderComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggleAudioList }) => {
-
-    const navigation = useNavigation()
+const HeaderViewComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggleAudioList }) => {
 
     const { getAudioDeviceList } = useMediaDevice()
+    const navigation = useNavigation()
 
     const fetchAudioDevices = async () => {
         const devices = await getAudioDeviceList();
@@ -112,15 +115,11 @@ const HeaderComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggl
         }
     }
 
-    return (
-        <View style={{
-            flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-            padding: 16,
-        }}>
-
+    const BackIconComponent = () => {
+        return (
             <Pressable
                 style={({ pressed }) => ({
-                    backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
+                    backgroundColor: '#4890E0', opacity: pressed ? 0.8 : 1,
                     alignItems: 'center', justifyContent: 'center',
                     padding: 8, borderRadius: 20
 
@@ -129,41 +128,46 @@ const HeaderComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, toggl
             >
                 <ArrowIcon fill="white" width={18} height={18} />
             </Pressable>
+        )
+    }
+
+
+    const options = [
+        {
+            icon: <Speaker fill="white" width={18} height={18} />,
+            onPress: handleAudioButtonPress
+        },
+        {
+            icon: <CameraSwitch fill="white" width={18} height={18} />,
+            onPress: handleCameraButtonPress
+        }
+    ]
+
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16 }}>
+
+            <BackIconComponent />
 
             <View style={{ flexDirection: 'row', gap: 16 }}>
-
-                <Pressable
-                    style={({ pressed }) => ({
-                        backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
-                        alignItems: 'center', justifyContent: 'center',
-                        padding: 8, borderRadius: 20
-
-                    })}
-                    onPress={handleAudioButtonPress}
-                >
-                    <Speaker fill="white" width={18} height={18} />
-                </Pressable>
-
-                <Pressable
-                    style={({ pressed }) => ({
-                        backgroundColor: pressed ? '#FFFFFF' : '#4890E0',
-                        alignItems: 'center', justifyContent: 'center',
-                        padding: 8, borderRadius: 20
-
-                    })}
-                    onPress={handleCameraButtonPress}
-                >
-                    <CameraSwitch fill="white" width={18} height={18} />
-                </Pressable>
+                {options.map(({ icon, onPress }, index) => (
+                    <Pressable
+                        key={index}
+                        style={({ pressed }) => ({
+                            backgroundColor: '#4890E0', opacity: pressed ? 0.8 : 1,
+                            alignItems: 'center', justifyContent: 'center',
+                            padding: 8, borderRadius: 20
+                        })}
+                        onPress={onPress}
+                    >
+                        {icon}
+                    </Pressable>
+                ))}
             </View>
         </View>
     )
 }
 
-const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
-
-
-    if (!tracks) return null
+const RTCViewComponent = ({ tracks, micOn, setMicOn, videoOn, setVideoOn }) => {
 
     return (
         <View style={{ height: wp(120), paddingTop: '5%' }}>
@@ -174,6 +178,7 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
                     elevation: 12, shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25,
                     shadowRadius: 12, shadowColor: '#A6A6A6',
                 }}>
+                    <View style={{ position: 'absolute', height: 8, backgroundColor: '#000000', top: 20, left: 100, right: 100, borderRadius: 50 }} />
                     {videoOn && tracks
                         ?
                         <RTCView
@@ -195,38 +200,32 @@ const RTCViewComponent = ({ tracks, videoOn, micOn, setMicOn, setVideoOn }) => {
                     }}>
                         <TouchableOpacity
                             activeOpacity={0.8}
-                            onPress={() => {
-                                setMicOn(!micOn)
-                            }}
+                            onPress={() => { setMicOn(!micOn) }}
                             style={{
-                                height: 50,
-                                aspectRatio: 1,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: 10,
-                                borderRadius: 100,
-                                backgroundColor: micOn ? colors.black : 'red'
+                                height: 50, aspectRatio: 1,
+                                justifyContent: 'center', alignItems: 'center', padding: 10,
+                                borderRadius: 100, backgroundColor: micOn ? colors.black : 'red'
                             }}
                         >
-                            {micOn ? <MicOn fill="white" width={25} height={25} /> : <MicOff fill="black" width={25} height={25} />}
+                            {micOn
+                                ? <MicOn fill="white" width={25} height={25} />
+                                : <MicOff fill="black" width={25} height={25} />
+                            }
                         </TouchableOpacity>
 
                         <TouchableOpacity
                             activeOpacity={0.8}
-                            onPress={() => {
-                                setVideoOn(!videoOn)
-                            }}
+                            onPress={() => { setVideoOn(!videoOn) }}
                             style={{
-                                height: 50,
-                                aspectRatio: 1,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: 10,
-                                borderRadius: 100,
-                                backgroundColor: videoOn ? colors.black : 'red'
+                                height: 50, aspectRatio: 1,
+                                justifyContent: 'center', alignItems: 'center', padding: 10,
+                                borderRadius: 100, backgroundColor: videoOn ? colors.black : 'red'
                             }}
                         >
-                            {videoOn ? <VideoOn fill="white" width={25} height={25} /> : <VideoOff fill="black" width={25} height={25} />}
+                            {videoOn
+                                ? <VideoOn fill="white" width={25} height={25} />
+                                : <VideoOff fill="black" width={25} height={25} />
+                            }
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -292,12 +291,8 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 activeOpacity={0.8}
                                 onPress={() => toggleDropDown(!showDropDown)}
                                 style={{
-                                    height: 50,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    backgroundColor: "#4890E0",
-                                    borderRadius: 12,
-                                    marginVertical: 12,
+                                    height: 50, justifyContent: "center", alignItems: "center",
+                                    backgroundColor: "#4890E0", borderRadius: 12, marginVertical: 12,
                                 }}
                             >
                                 <Text style={{ color: 'white' }}>
@@ -305,7 +300,6 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 </Text>
                             </TouchableOpacity>
                         }
-
                     >
                         {meetingTypes.map((item, index) => (
                             <MenuItem
@@ -362,12 +356,9 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                     activeOpacity={0.8}
                                     onPress={() => toggleDropDown(!showDropDown)}
                                     style={{
-                                        height: 50,
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        backgroundColor: "#4890E0",
-                                        borderRadius: 12,
-                                        marginVertical: 12,
+                                        height: 50, justifyContent: "center",
+                                        alignItems: "center", backgroundColor: "#4890E0",
+                                        borderRadius: 12, marginVertical: 12,
                                     }}
                                 >
                                     <Text style={{ color: 'white' }}>
@@ -457,8 +448,7 @@ const AudioListBottomSheet = ({ audioList, toggleAudioList, audioListVisible }) 
                             style={{
                                 paddingHorizontal: 16, paddingVertical: 12,
                                 backgroundColor: item.deviceId === selectedDeviceId ? '#BBB5B4' : 'white',
-                                borderRadius: 8, borderWidth: 1, borderColor: '#BBB5B4',
-                                marginBottom: 10
+                                borderRadius: 8, borderWidth: 1, borderColor: '#BBB5B4', marginBottom: 10
                             }}
                         >
                             <Text style={{ fontSize: 16, color: 'black' }}>
