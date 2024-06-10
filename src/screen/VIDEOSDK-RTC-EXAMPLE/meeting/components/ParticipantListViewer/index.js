@@ -16,8 +16,9 @@ const ParticipantListViewer = ({ participantIds }) => {
         data={participantIds}
         keyExtractor={(item) => `${item}_participant`}
         style={{ marginBottom: 4 }}
-        renderItem={({ item }) => {
-          return <ParticipantListItem participantId={item} />;
+        scrollEnabled={false}
+        renderItem={({ item, index }) => {
+          return <ParticipantListItem key={index} participantId={item} />;
         }}
       />
     </View>

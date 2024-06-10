@@ -85,7 +85,9 @@ const JoinScreen = () => {
             </CustomKeyboardAvoidingView>
 
             <AudioListBottomSheet {...{
-                audioList, toggleAudioList, showAudioListVisible, audioListVisible
+                show: audioListVisible,
+                hide: () => showAudioListVisible(false),
+                audioList, toggleAudioList
             }} />
         </Layout >
     )
@@ -421,7 +423,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
     )
 }
 
-const AudioListBottomSheet = ({ audioList, toggleAudioList, audioListVisible }) => {
+const AudioListBottomSheet = ({ show, hide, audioList, toggleAudioList, }) => {
     const [selectedDeviceId, setSelectedDeviceId] = useState(null)
 
     const handleDevicePress = async (device) => {
@@ -433,9 +435,10 @@ const AudioListBottomSheet = ({ audioList, toggleAudioList, audioListVisible }) 
 
     return (
         <BottomSheet
-            visible={audioListVisible}
+            visible={show}
             title={'Device Audio List'}
             childrenStyle={{ padding: 16 }}
+            onClose={hide}
             flatListProps={{
                 data: audioList,
                 renderItem: ({ item }) => {

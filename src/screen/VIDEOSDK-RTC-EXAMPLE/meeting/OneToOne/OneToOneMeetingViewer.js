@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
 import RecordingAnimation from '../../assets/animation/recording_lottie.json'
-import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, More, Recording, ScreenShare, Speaker, VideoOff, VideoOn } from '../../assets/icons'
+import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, More, Participants, Recording, ScreenShare, Speaker, VideoOff, VideoOn } from '../../assets/icons'
 import Blink from '../../components/Blink'
 import BottomSheet from '../../components/BottomSheet'
 import colors from '../../styles/colors'
@@ -137,11 +137,11 @@ const OneToOneMeetingViewer = () => {
     )
 }
 
-const HeaderComponent = () => {
+export const HeaderComponent = ({ participantBottomSheetEnable, onPressParticipantIcon }) => {
     const [audioDeviceList, setAudioDeviceList] = useState([])
     const [audioListVisible, showAudioListVisible] = useState(false)
 
-    const { changeWebcam, meetingId, recordingState } = useMeeting({
+    const { changeWebcam, meetingId, recordingState, participants } = useMeeting({
         onError: (data) => {
             const { code, message } = data
             Toast.show(`Error: ${code}: ${message}`)
@@ -185,7 +185,7 @@ const HeaderComponent = () => {
                 </View>
             }
 
-            <View style={{ flex: 1, justifyContent: 'space-between', marginLeft: isRecordingState ? 8 : 0, }}>
+            <View style={{ flex: 1, justifyContent: 'space-between', marginLeft: true ? 8 : 0, }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Text style={{ fontSize: 16, color: 'black' }}>
                         {meetingId ? meetingId : "xxxx-xxxx-xxxx"}
@@ -263,11 +263,28 @@ const HeaderComponent = () => {
             >
                 <CameraSwitch height={20} width={20} fill="white" />
             </TouchableOpacity>
+
+            {participantBottomSheetEnable &&
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={onPressParticipantIcon}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center', justifyContent: 'center', marginLeft: 8,
+                        backgroundColor: '#4890E0', borderRadius: 10, padding: 4
+                    }}
+                >
+                    <Participants height={18} width={18} fill="white" />
+                    <Text style={{ fontSize: 14, color: 'white', marginLeft: 4 }}>
+                        {participants ? [...participants.keys()].length : 1}
+                    </Text>
+                </TouchableOpacity>
+            }
         </View>
     )
 }
 
-const ParticipantComponent = ({ participantCount, localScreenShareOn, participantIds, openStateBottomSheet, presenterId }) => {
+export const ParticipantComponent = ({ participantCount, localScreenShareOn, participantIds, openStateBottomSheet, presenterId }) => {
 
     return (
         <View style={{ flex: 1, marginTop: 8, marginBottom: 12 }}>
@@ -296,7 +313,7 @@ const ParticipantComponent = ({ participantCount, localScreenShareOn, participan
     )
 }
 
-const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, setParticipantStatsViewer, statParticipantId, participantIds, participantListViewer, participantStatsViewer, setStatParticipantId }) => {
+export const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, setParticipantStatsViewer, statParticipantId, participantIds, participantListViewer, participantStatsViewer, setStatParticipantId }) => {
 
     return (
         <BottomSheet
@@ -326,7 +343,7 @@ const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, 
     )
 }
 
-const EndCallOptionComponent = () => {
+export const EndCallOptionComponent = () => {
     const [isEndCallVisible, setIsEndCallVisible] = useState(false)
 
     const { leave, end } = useMeeting({
@@ -410,7 +427,7 @@ const EndCallOptionComponent = () => {
     )
 }
 
-const MoreOptionComponent = () => {
+export const MoreOptionComponent = () => {
     const [moreOptionVisible, setMoreOptionVisible] = useState(false)
 
     const { recordingState, localScreenShareOn, toggleScreenShare, startRecording, stopRecording, presenterId } = useMeeting({

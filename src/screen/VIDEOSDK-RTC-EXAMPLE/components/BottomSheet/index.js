@@ -24,10 +24,14 @@ const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap
             childrenStyle={childrenStyle}
             HeaderComponent={
                 <>
-                    <Text style={{ fontSize: 16, color: 'black', fontWeight: 'bold', textAlign: 'center', padding: 16, }}>
-                        {title}
-                    </Text>
-                    <View style={{ height: 1, backgroundColor: '#E5E7EA', width: '100%' }} />
+                    {title &&
+                        <>
+                            <Text style={{ fontSize: 16, color: 'black', fontWeight: 'bold', textAlign: 'center', padding: 16, }}>
+                                {title}
+                            </Text>
+                            <View style={{ height: 1, backgroundColor: '#E5E7EA', width: '100%' }} />
+                        </>
+                    }
                 </>
             }
             {...props}

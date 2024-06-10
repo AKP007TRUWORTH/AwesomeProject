@@ -1,92 +1,33 @@
 import React from "react";
 import { View, Text } from "react-native";
-import {
-  MicOff,
-  MicOn,
-  VideoOff,
-  VideoOn,
-  Person,
-} from "../../../assets/icons";
+import { MicOff, MicOn, VideoOff, VideoOn, Person, } from "../../../assets/icons";
 import { useParticipant } from "@videosdk.live/react-native-sdk";
-import { ROBOTO_FONTS } from "../../../styles/fonts";
 import colors from "../../../styles/colors";
-import { convertRFValue } from "../../../styles/spacing";
 
-function ParticipantListItem({ participantId }) {
-  const { displayName, webcamOn, micOn, isLocal } =
-    useParticipant(participantId);
-
-  const IconContainer = ({ Icon, style }) => {
-    return (
-      <View
-        style={{
-          height: 36,
-          aspectRatio: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          marginLeft: 8,
-          borderColor: "rgba(245,245,245, 0.2)",
-          borderRadius: 20,
-          ...style,
-        }}
-      >
-        <Icon />
-      </View>
-    );
-  };
+const ParticipantListItem = ({ participantId }) => {
+  const { displayName, webcamOn, micOn, isLocal } = useParticipant(participantId);
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 10,
-        marginVertical: 8,
-        borderRadius: 10,
-        backgroundColor: colors.primary[600],
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <View
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            height: 36,
-            aspectRatio: 1,
-            borderRadius: 20,
-            backgroundColor: colors.primary[500],
-          }}
-        >
+    <View style={{
+      flexDirection: "row", justifyContent: "space-between",
+      padding: 10, marginVertical: 8, borderRadius: 10, backgroundColor: colors.primary[600],
+    }}>
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <View style={{
+          alignItems: "center", justifyContent: "center", height: 36, aspectRatio: 1,
+          borderRadius: 20, backgroundColor: colors.primary[500],
+        }}>
           <Person />
         </View>
-        <View
-          style={{
-            marginLeft: 8,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: convertRFValue(14),
-              color: colors.primary[100],
-              fontFamily: ROBOTO_FONTS.RobotoMedium,
-            }}
-          >
-            {isLocal ? "You" : displayName || ""}
+
+        <View style={{ marginLeft: 8, justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ fontSize: 14, color: colors.primary[100] }}>
+            {isLocal ? "You" : displayName || "Anil"}
           </Text>
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
+
+      <View style={{ flexDirection: "row" }}>
         <IconContainer
           style={{
             borderWidth: micOn ? 1 : 0,
@@ -118,4 +59,17 @@ function ParticipantListItem({ participantId }) {
     </View>
   );
 }
+
+const IconContainer = ({ Icon, style }) => {
+  return (
+    <View style={{
+      height: 36, aspectRatio: 1, justifyContent: "center",
+      alignItems: "center", marginLeft: 8, borderColor: "rgba(245,245,245, 0.2)",
+      borderRadius: 20, ...style,
+    }}>
+      <Icon />
+    </View>
+  );
+};
+
 export default React.memo(ParticipantListItem);
