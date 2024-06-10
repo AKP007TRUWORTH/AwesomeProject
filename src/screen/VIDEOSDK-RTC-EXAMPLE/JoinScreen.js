@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { Layout, MenuItem, OverflowMenu } from '@ui-kitten/components'
 import { createCameraVideoTrack, RTCView, switchAudioDevice, useMediaDevice } from '@videosdk.live/react-native-sdk'
-import { BackHandler, Dimensions, Image, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, Dimensions, Image, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
 
-import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
+import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
 import { createMeeting, validateMeeting } from './api/create-meeting'
 import { widthPercentageToDP as wp } from '../../helpers/Responsive'
 import { VIDEO_SDK_TOKEN } from './helper/environment'
@@ -17,7 +17,6 @@ import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
 import colors from './styles/colors'
 import _ from 'lodash'
-import OneToOneMeetingViewer from './meeting/OneToOne/OneToOneMeetingViewer'
 
 const JoinScreen = () => {
     const [micOn, setMicOn] = useState(false)
@@ -117,50 +116,49 @@ const HeaderViewComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, t
 
     const BackIconComponent = () => {
         return (
-            <Pressable
-                style={({ pressed }) => ({
-                    backgroundColor: '#4890E0', opacity: pressed ? 0.8 : 1,
-                    alignItems: 'center', justifyContent: 'center',
-                    padding: 8, borderRadius: 20
-
-                })}
+            <TouchableOpacity
+                activeOpacity={0.5}
+                style={{
+                    alignItems: 'center', justifyContent: 'center', marginRight: 16,
+                    backgroundColor: '#4890E0', borderRadius: 10, padding: 4
+                }}
                 onPress={() => navigation.goBack()}
             >
-                <ArrowIcon fill="white" width={18} height={18} />
-            </Pressable>
+                <ArrowIcon fill="white" width={20} height={20} />
+            </TouchableOpacity>
         )
     }
 
 
     const options = [
         {
-            icon: <Speaker fill="white" width={18} height={18} />,
+            icon: <Speaker fill="white" width={20} height={20} />,
             onPress: handleAudioButtonPress
         },
         {
-            icon: <CameraSwitch fill="white" width={18} height={18} />,
+            icon: <CameraSwitch fill="white" width={20} height={20} />,
             onPress: handleCameraButtonPress
         }
     ]
 
     return (
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
 
             <BackIconComponent />
 
             <View style={{ flexDirection: 'row', gap: 16 }}>
                 {options.map(({ icon, onPress }, index) => (
-                    <Pressable
+                    <TouchableOpacity
                         key={index}
-                        style={({ pressed }) => ({
-                            backgroundColor: '#4890E0', opacity: pressed ? 0.8 : 1,
+                        activeOpacity={0.5}
+                        style={{
                             alignItems: 'center', justifyContent: 'center',
-                            padding: 8, borderRadius: 20
-                        })}
+                            backgroundColor: '#4890E0', borderRadius: 10, padding: 4
+                        }}
                         onPress={onPress}
                     >
                         {icon}
-                    </Pressable>
+                    </TouchableOpacity>
                 ))}
             </View>
         </View>
@@ -170,11 +168,11 @@ const HeaderViewComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, t
 const RTCViewComponent = ({ tracks, micOn, setMicOn, videoOn, setVideoOn }) => {
 
     return (
-        <View style={{ height: wp(120), paddingTop: '5%' }}>
-            <View style={{ flex: 1, width: '80%', alignSelf: 'center' }}>
+        <View style={{ height: wp(140), paddingTop: '5%' }}>
+            <View style={{ flex: 1, width: '90%', alignSelf: 'center' }}>
                 <View style={{
                     flex: 1, overflow: 'hidden',
-                    borderRadius: 20, borderColor: '#D8D8D8', backgroundColor: '#FFFFFF', borderWidth: 1,
+                    borderRadius: 16, borderColor: '#D8D8D8', backgroundColor: '#FFFFFF', borderWidth: 1,
                     elevation: 12, shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25,
                     shadowRadius: 12, shadowColor: '#A6A6A6',
                 }}>
