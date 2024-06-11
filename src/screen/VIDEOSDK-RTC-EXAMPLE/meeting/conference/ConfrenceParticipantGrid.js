@@ -6,7 +6,7 @@ import PauseInvisibleParticipants from './PauseInvisibleParticipant'
 import BottomSheet from '../../components/BottomSheet'
 import ParticipantStatsViewer from '../components/ParticipantStatsViewer'
 
-const MemoizedParticipant = memo(ParticipantView,
+export const MemoizedParticipant = memo(ParticipantView,
     (
         { participantId, quality, key, openStatsBottomSheet },
         {
@@ -40,7 +40,6 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
 
             <FlatList
                 data={[...participantIds]}
-                style={{ flex: 1 }}
                 numColumns={2}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ gap: 8, }}
@@ -54,19 +53,6 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
                     />
                 )}
             />
-
-            {/* <BottomSheet
-                visible={sheetOpen}
-                onClose={() => setSheetOpen(false)}
-            >
-                {participantId
-                    ? <ParticipantStatsViewer participantId={participantId} />
-                    :
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                        <ActivityIndicator size={'large'} />
-                    </View>
-                }
-            </BottomSheet> */}
         </>
     )
 }

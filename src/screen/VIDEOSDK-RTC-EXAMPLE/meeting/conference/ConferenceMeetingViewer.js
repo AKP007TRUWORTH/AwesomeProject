@@ -1,11 +1,11 @@
 import { useMeeting } from '@videosdk.live/react-native-sdk'
 import React, { useMemo, useState } from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { FlatList, TouchableOpacity, View } from 'react-native'
 import BottomSheet from '../../components/BottomSheet'
 import { EndCallOptionComponent, HeaderComponent, MoreOptionComponent } from '../OneToOne/OneToOneMeetingViewer'
 import RemoteParticipantPresenter from './RemoteParticipantPresenter'
 import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
-import { MemoizedParticipantGrid } from './ConfrenceParticipantGrid'
+import { MemoizedParticipant, MemoizedParticipantGrid } from './ConfrenceParticipantGrid'
 import { Chat, MicOff, MicOn, VideoOff, VideoOn } from '../../assets/icons'
 import ChatViewer from '../components/ChatViewer'
 import ParticipantListViewer from '../components/ParticipantListViewer'
@@ -125,45 +125,77 @@ const ConfrenceMeetingParticipants = () => {
         return ids
     }, [participants, activeSpeakerId, pinnedParticipants, presenterId, localScreenShareOn])
 
-    const participantCount = participantIds ? participantIds.length : null
-    const filterParticipantIds = participantIds.filter((pId) => pId !== localParticipant.id)
+    const allParticipantIds = [...participants.keys()]
+    const participantCount = allParticipantIds ? allParticipantIds.length : null
+    const filterParticipantIds = allParticipantIds.filter((pId) => pId !== localParticipant.id)
+
+
+    if (presenterId) {
+        return (
+            <View style={{ flex: 1, margin: 12, }}>
+                {presenterId && !localScreenShareOn
+                    ?
+                    <>
+                        <View style={{
+                            height: '70%', backgroundColor: colors.primary[800],
+                            borderRadius: 12, overflow: 'hidden', marginBottom: 8
+                        }}>
+                            <RemoteParticipantPresenter presenterId={presenterId} />
+                        </View>
+
+                        <FlatList
+                            data={[...allParticipantIds]}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ gap: 8, }}
+                            renderItem={({ item: participantId }) => (
+                                <MemoizedParticipant
+                                    key={participantId}
+                                    participantId={participantId}
+                                    quality={'high'}
+                                />
+                            )}
+                        />
+                    </>
+                    : presenterId && localScreenShareOn
+                        ?
+                        <>
+                            <LocalParticipantPresenter />
+
+                            <FlatList
+                                data={[...allParticipantIds]}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{ gap: 8, }}
+                                renderItem={({ item: participantId }) => (
+                                    <MemoizedParticipant
+                                        key={participantId}
+                                        participantId={participantId}
+                                        quality={'high'}
+                                    />
+                                )}
+                            />
+                        </>
+                        : null
+                }
+            </View>
+        )
+    }
 
     return (
         <View style={{ flex: 1, margin: 12, }}>
-            {presenterId && !localScreenShareOn
-                ?
-                <View style={{
-                    height: '70%', backgroundColor: colors.primary[800],
-                    borderRadius: 12, overflow: 'hidden', marginBottom: 8
-                }}>
-                    <RemoteParticipantPresenter presenterId={presenterId} />
-                </View>
-                : presenterId && localScreenShareOn
-                    ? <LocalParticipantPresenter />
-                    : null
+
+            {participantCount > 1 &&
+                <>
+                    {participantCount > 2
+                        ? <MemoizedParticipantGrid participantIds={filterParticipantIds} isPresenting={presenterId != null} />
+                        : <LargeViewContainer participantId={participantIds[1]} />
+                    }
+                    <MiniViewContainer participantId={localParticipant.id} />
+                </>
             }
 
-            {participantCount > 1
-                ?
-                <>
-                    {participantCount > 2 ?
-                        <MemoizedParticipantGrid
-                            participantIds={filterParticipantIds}
-                            isPresenting={presenterId != null}
-                        />
-                        :
-                        <LargeViewContainer participantId={participantIds[1]} />
-                    }
-
-                    <View style={{ position: 'absolute', right: 0, bottom: 0, left: 0 }}>
-                        <MiniViewContainer
-                            participantId={
-                                participantIds[localScreenShareOn || presenterId ? 1 : 0]
-                            }
-                        />
-                    </View>
-                </>
-                :
+            {participantCount <= 1 &&
                 <LocalViewContainer participantId={participantIds[0]} />
             }
         </View>
