@@ -12,7 +12,12 @@ const MiniVideoRTCView = ({ isOn, stream, displayName, isLocal, micOn, participa
     const { score } = useParticipantStat({ participantId });
 
     return (
-        <View style={{ position: 'absolute', bottom: 10, right: 10, height: 160, aspectRatio: 0.7, borderRadius: 14, backgroundColor: '#FF0000', overflow: 'hidden' }}>
+        <View style={{
+            position: 'absolute', bottom: 10, right: 10, height: 160, aspectRatio: 0.7,
+            borderRadius: 14, backgroundColor: '#FF0000', overflow: 'hidden',
+            borderWidth: 1, borderColor: '#4890E0', elevation: 12, shadowOffset: { width: 0, height: 2, }, shadowOpacity: 0.25,
+            shadowRadius: 12, shadowColor: '#A6A6A6',
+        }}>
             {isOn && stream ?
                 <>
                     <RTCView
