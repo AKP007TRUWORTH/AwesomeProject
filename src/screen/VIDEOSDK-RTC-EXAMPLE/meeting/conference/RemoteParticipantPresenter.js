@@ -9,7 +9,7 @@ const RemoteParticipantPresenter = ({ presenterId }) => {
     const presentingText = displayName || ""
 
     return (
-        <View style={{ flex: 1, paddingHorizontal: 12, borderTopColor: '#E5E5E5', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1, justifyContent: 'space-between' }}>
             {screenShareOn && screenShareStream
                 ? <RTCView
                     streamURL={new MediaStream([screenShareStream.track]).toURL()}
@@ -19,12 +19,12 @@ const RemoteParticipantPresenter = ({ presenterId }) => {
                 : null
             }
 
-            <View style={{ flexDirection: 'row', marginBottom: 8, justifyContent: 'space-between', position: 'absolute', bottom: 0, left: 10, right: 0 }}>
+            <View style={{ flexDirection: 'row', marginBottom: 8, alignItems: 'center', justifyContent: 'space-between', position: 'absolute', bottom: 0, left: 10, right: 10 }}>
                 <View style={{ flexDirection: 'row', padding: 6, justifyContent: 'center', alignItems: 'center', borderRadius: 4 }}>
                     <ScreenShare width={20} height={20} fill="white" />
                 </View>
-                <Text style={{ color: 'white', fontSize: 12, marginLeft: 10, fontWeight: 'bold' }}>
-                    {`${presentingText} is Presentng`}
+                <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>
+                    {`${presentingText} is presenting`}
                 </Text>
             </View>
         </View>

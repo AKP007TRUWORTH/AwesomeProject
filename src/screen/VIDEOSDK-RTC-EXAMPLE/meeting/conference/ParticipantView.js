@@ -40,10 +40,7 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
     return (
         <View
             key={participantId}
-            style={{
-                flex: 1, borderRadius: 8, overflow: 'hidden',
-                marginHorizontal: 3, marginVertical: 3
-            }}
+            style={{ flex: 1, overflow: 'hidden', borderRadius: 16 }}
         >
             {webcamOn && webcamStream
                 ?
@@ -54,7 +51,7 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
                         mirror={isLocal ? true : false}
                         style={{
                             flex: 1,
-                            backgroundColor: colors.primary[800]
+                            backgroundColor: colors.primary[600], aspectRatio: 1, borderRadius: 16
                         }}
                     />
 
@@ -74,6 +71,7 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
                         containerBackgroundColor={colors.primary[600]}
                         fontSize={24}
                         style={{
+                            margin: 50,
                             backgroundColor: colors.primary[500], height: 60, aspectRatio: 1, borderRadius: 40
                         }}
                     />
@@ -90,12 +88,13 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
                 right: 0,
                 left: 0,
                 bottom: 0,
-                borderWidth: isActiveSpeaker ? 2 : 0,
-                borderColor: '#5568FE',
-                borderRadius: 8,
+                borderWidth: isActiveSpeaker ? 1 : 0,
+                borderColor: '#3BA55D',
+                borderRadius: 16,
             }}>
                 {micOn || webcamOn ?
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={{
                             alignItems: 'center',
                             position: 'absolute',
@@ -113,9 +112,9 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
                                     ? "#FAA713"
                                     : "#FF5D5D"
                         }}
-                        onPress={() => {
-                            openStatsBottomSheet({ pId: participantId })
-                        }}
+                    // onPress={() => {
+                    //     openStatsBottomSheet({ pId: participantId })
+                    // }}
                     >
                         <NetworkIcon fill={'black'} />
                     </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, FlatList } from 'react-native'
 import React, { memo, useState } from 'react'
 import { useOrientation } from '../../utils/useOrientation'
 import ParticipantView from './ParticipantView'
@@ -38,27 +38,24 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
         <>
             <PauseInvisibleParticipants visibleParticipantIds={participantIds} />
 
-            {Array.from({ length: Math.ceil(participantCount / perRow) }, (_, index) => {
-                return (
-                    <View style={{ flex: 1, flexDirection: orientation === 'PORTRAIT' ? 'row' : 'column' }}>
-                        {participantIds
-                            .slice(index * perRow, (index + 1) * perRow)
-                            .map((participantId) => {
-                                return (
-                                    <MemoizedParticipant
-                                        key={participantId}
-                                        participantId={participantId}
-                                        quality={quality}
-                                        openStatsBottomSheet={openStatsBottomSheet}
-                                    />
-                                )
-                            })
-                        }
-                    </View>
-                )
-            })}
+            <FlatList
+                data={[...participantIds]}
+                style={{ flex: 1 }}
+                numColumns={2}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ gap: 8, }}
+                columnWrapperStyle={{ gap: 8 }}
+                renderItem={({ item: participantId }) => (
+                    <MemoizedParticipant
+                        key={participantId}
+                        participantId={participantId}
+                        quality={quality}
+                        openStatsBottomSheet={openStatsBottomSheet}
+                    />
+                )}
+            />
 
-            <BottomSheet
+            {/* <BottomSheet
                 visible={sheetOpen}
                 onClose={() => setSheetOpen(false)}
             >
@@ -69,7 +66,7 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
                         <ActivityIndicator size={'large'} />
                     </View>
                 }
-            </BottomSheet>
+            </BottomSheet> */}
         </>
     )
 }

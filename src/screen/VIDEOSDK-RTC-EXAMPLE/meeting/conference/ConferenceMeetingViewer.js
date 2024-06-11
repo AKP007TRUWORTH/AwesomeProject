@@ -123,13 +123,14 @@ const ConfrenceMeetingParticipants = () => {
         return ids
     }, [participants, activeSpeakerId, pinnedParticipants, presenterId, localScreenShareOn])
 
-    console.log(participantIds);
-
     return (
-        <View style={{ flex: 1, flexDirection: orientation == "PORTRAIT" ? "column" : "row" }}>
+        <View style={{ flex: 1, margin: 12, }}>
             {presenterId && !localScreenShareOn
                 ?
-                <View style={{ flex: 1, backgroundColor: colors.primary[800], borderRadius: 12, overflow: 'hidden' }}>
+                <View style={{
+                    height: '70%', backgroundColor: colors.primary[800],
+                    borderRadius: 12, overflow: 'hidden', marginBottom: 8
+                }}>
                     <RemoteParticipantPresenter presenterId={presenterId} />
                 </View>
                 : presenterId && localScreenShareOn
