@@ -82,50 +82,56 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet }) => {
                 </>
             }
 
-            <View style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                left: 0,
-                bottom: 0,
-                borderWidth: isActiveSpeaker ? 1 : 0,
-                borderColor: '#3BA55D',
-                borderRadius: 16,
-            }}>
-                {micOn || webcamOn ?
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={{
-                            alignItems: 'center',
-                            position: 'absolute',
-                            top: 10,
-                            padding: 8,
-                            height: 26,
-                            aspectRatio: 1,
-                            borderRadius: 12,
-                            justifyContent: 'center',
-                            backgroundColor: colors.primary[700],
-                            left: 10,
-                            backgroundColor: score && score > 7
-                                ? "#3BA55D"
-                                : score > 4
-                                    ? "#FAA713"
-                                    : "#FF5D5D"
-                        }}
-                    // onPress={() => {
-                    //     openStatsBottomSheet({ pId: participantId })
-                    // }}
-                    >
-                        <NetworkIcon fill={'black'} />
-                    </TouchableOpacity>
-                    : null
-                }
-            </View>
+            <NetworkRangeComponent {...{ isActiveSpeaker, micOn, webcamOn, score }} />
         </View>
     )
 }
 
-const MicStatusComponent = () => {
+const NetworkRangeComponent = ({ isActiveSpeaker, micOn, webcamOn, score }) => {
+    return (
+        <View style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+            borderWidth: isActiveSpeaker ? 1 : 0,
+            borderColor: '#3BA55D',
+            borderRadius: 16,
+        }}>
+            {micOn || webcamOn ?
+                <TouchableOpacity
+                    activeOpacity={0.8}
+                    style={{
+                        alignItems: 'center',
+                        position: 'absolute',
+                        top: 10,
+                        padding: 8,
+                        height: 26,
+                        aspectRatio: 1,
+                        borderRadius: 12,
+                        justifyContent: 'center',
+                        backgroundColor: colors.primary[700],
+                        left: 10,
+                        backgroundColor: score && score > 7
+                            ? "#3BA55D"
+                            : score > 4
+                                ? "#FAA713"
+                                : "#FF5D5D"
+                    }}
+                // onPress={() => {
+                //     openStatsBottomSheet({ pId: participantId })
+                // }}
+                >
+                    <NetworkIcon fill={'black'} />
+                </TouchableOpacity>
+                : null
+            }
+        </View>
+    )
+}
+
+export const MicStatusComponent = () => {
     return (
         <View style={{
             alignItems: 'center', position: 'absolute', top: 10, justifyContent: 'center',
@@ -137,7 +143,7 @@ const MicStatusComponent = () => {
     )
 }
 
-const DisplayNameComponent = ({ isLocal, displayName }) => {
+export const DisplayNameComponent = ({ isLocal, displayName }) => {
 
     return (
         <View style={{

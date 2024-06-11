@@ -11,6 +11,8 @@ import ChatViewer from '../components/ChatViewer'
 import ParticipantListViewer from '../components/ParticipantListViewer'
 import colors from '../../styles/colors'
 import LargeViewContainer from '../OneToOne/LargeView/LargeViewContainer'
+import MiniViewContainer from '../OneToOne/MiniView/MiniViewContainer'
+import LocalViewContainer from '../OneToOne/LocalViewContainer'
 
 const ConferenceMeetingViewer = () => {
     const [chatBottomSheetView, setChatBottomSheetView] = useState(false)
@@ -123,6 +125,9 @@ const ConfrenceMeetingParticipants = () => {
         return ids
     }, [participants, activeSpeakerId, pinnedParticipants, presenterId, localScreenShareOn])
 
+    const participantCount = participantIds ? participantIds.length : null
+    const filterParticipantIds = participantIds.filter((pId) => pId !== localParticipant.id)
+
     return (
         <View style={{ flex: 1, margin: 12, }}>
             {presenterId && !localScreenShareOn
@@ -138,22 +143,44 @@ const ConfrenceMeetingParticipants = () => {
                     : null
             }
 
-            <MemoizedParticipantGrid
-                participantIds={participantIds}
-                isPresenting={presenterId != null}
-            />
+            {participantCount > 1
+                ?
+                <>
+                    {participantCount > 2 ?
+                        <MemoizedParticipantGrid
+                            participantIds={filterParticipantIds}
+                            isPresenting={presenterId != null}
+                        />
+                        :
+                        <LargeViewContainer participantId={participantIds[1]} />
+                    }
+
+                    <View style={{ position: 'absolute', right: 0, bottom: 0, left: 0 }}>
+                        <MiniViewContainer
+                            participantId={
+                                participantIds[localScreenShareOn || presenterId ? 1 : 0]
+                            }
+                        />
+                    </View>
+                </>
+                :
+                <LocalViewContainer participantId={participantIds[0]} />
+            }
         </View>
     )
 }
 
 const ChatBottomComponent = ({ show, hide, participantSheetOption }) => {
-
     const { participants } = useMeeting()
+
+    const isChat = participantSheetOption == 'CHAT'
 
     return (
         <BottomSheet
+            title={isChat ? 'Chat' : undefined}
             visible={show}
             onClose={hide}
+            childrenStyle={{ padding: isChat ? 16 : 0 }}
         >
             {participantSheetOption === "CHAT"
                 ? <ChatViewer />

@@ -5,7 +5,7 @@ import LargeVideoRTCView from './LargeView/LargeVideoRTCView'
 import colors from '../../styles/colors'
 
 const LocalViewContainer = ({ participantId }) => {
-    const { webcamOn, webcamStream, displayName, setQuality, isLocal } = useParticipant(participantId, {})
+    const { webcamOn, webcamStream, displayName, setQuality, isLocal, micOn, isActiveSpeaker } = useParticipant(participantId, {})
 
     useEffect(() => {
         setQuality("high")
@@ -19,6 +19,8 @@ const LocalViewContainer = ({ participantId }) => {
                 displayName={displayName}
                 objectFit={'cover'}
                 isLocal={isLocal}
+                micOn={micOn}
+                isActiveSpeaker={isActiveSpeaker}
             />
         </View>
     )

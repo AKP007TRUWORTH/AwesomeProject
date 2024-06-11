@@ -7,7 +7,7 @@ import colors from '../../../styles/colors'
 import { NetworkIcon } from '../../../assets/icons'
 
 const LargeViewContainer = ({ participantId, openStatsBottomSheet }) => {
-    const { screenShareOn, screenShareStream, webcamOn, webcamStream, displayName, setQuality, isLocal, micOn } = useParticipant(participantId, {})
+    const { screenShareOn, screenShareStream, webcamOn, webcamStream, displayName, setQuality, isLocal, micOn, isActiveSpeaker } = useParticipant(participantId, {})
 
     const { score } = useParticipantStat({ participantId });
 
@@ -25,6 +25,8 @@ const LargeViewContainer = ({ participantId, openStatsBottomSheet }) => {
                         displayName={displayName}
                         objectFit={'cover'}
                         isLocal={isLocal}
+                        micOn={micOn}
+                        isActiveSpeaker={isActiveSpeaker}
                     />
                 </>
                 :
@@ -35,6 +37,8 @@ const LargeViewContainer = ({ participantId, openStatsBottomSheet }) => {
                         displayName={displayName}
                         objectFit={'cover'}
                         isLocal={isLocal}
+                        micOn={micOn}
+                        isActiveSpeaker={isActiveSpeaker}
                     />
 
                     {micOn || webcamOn ?
