@@ -9,11 +9,11 @@ import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, Mor
 import Blink from '../../components/Blink'
 import BottomSheet from '../../components/BottomSheet'
 import colors from '../../styles/colors'
-import ChatViewer from '../components/ChatViewer'
+import ChatViewer from '../components/ChatViewer/ChatViewer'
 import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
 import MenuItem from '../components/MenuItem'
-import ParticipantListViewer from '../components/ParticipantListViewer'
-import ParticipantStatsViewer from '../components/ParticipantStatsViewer'
+import ParticipantListViewer from '../components/ParticipantListViewer/ParticipantListViewer'
+import ParticipantStatsViewer from '../components/ParticipantStatsViewer/ParticipantStatsViewer'
 import LargeViewContainer from './LargeView/LargeViewContainer'
 import LocalViewContainer from './LocalViewContainer'
 import MiniViewContainer from './MiniView/MiniViewContainer'
@@ -263,6 +263,23 @@ const HeaderComponent = () => {
             >
                 <CameraSwitch height={20} width={20} fill="white" />
             </TouchableOpacity>
+
+            {participantBottomSheetEnable && [...participants.keys()].length > 1 &&
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={onPressParticipantIcon}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center', justifyContent: 'center', marginLeft: 8,
+                        backgroundColor: '#4890E0', borderRadius: 10, padding: 4
+                    }}
+                >
+                    <Participants height={18} width={18} fill="white" />
+                    <Text style={{ fontSize: 14, color: 'white', marginLeft: 4 }}>
+                        {participants ? [...participants.keys()].length : 1}
+                    </Text>
+                </TouchableOpacity>
+            }
         </View>
     )
 }
@@ -483,14 +500,14 @@ const MoreOptionComponent = () => {
 
                 {/* <View style={{ height: 1, backgroundColor: colors.primary["600"] }} />
 
-            <MenuItem
-                title={"Participants"}
-                icon={<Participants width={22} height={22} />}
-                onPress={() => {
+                <MenuItem
+                    title={"Participants"}
+                    icon={<Participants width={22} height={22} />}
+                    onPress={() => {
                     setParticipantStatsViewer(true);
                     setMoreOptionVisible(false)
                     setChatViewer(true)
-                }}
+                    }}
             /> */}
             </>
         </Popover>
