@@ -23,6 +23,7 @@ const MeetingScreen = ({ route, navigation }) => {
                         message: "Meeting is running."
                     },
                     defaultCamera,
+                    metaData: { meetingId, meetingType }
                 }}
                 token={token}
             >
@@ -46,7 +47,6 @@ const MeetingScreen = ({ route, navigation }) => {
         </Layout>
     )
 }
-
 
 const MeetingContainer = ({ webcamEnabled, meetingType }) => {
     const [isJoined, setIsJoined] = useState(false)
@@ -87,8 +87,10 @@ const MeetingContainer = ({ webcamEnabled, meetingType }) => {
         }
     }, [])
 
+    const groupMeeting = [...participants.values()].every(item => item.metaData.meetingType === "GROUP")
+
     return isJoined
-        ? meetingType === "GROUP"
+        ? meetingType === "GROUP" && groupMeeting
             ? <ConferenceMeetingViewer />
             : participantLimit
                 ? <ParticipantLimitViewer />

@@ -5,18 +5,20 @@ import React, { useEffect, useRef, useState } from 'react'
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
 import RecordingAnimation from '../../assets/animation/recording_lottie.json'
-import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, More, Recording, ScreenShare, Speaker, VideoOff, VideoOn } from '../../assets/icons'
+import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, More, Participants, Recording, ScreenShare, Speaker, VideoOff, VideoOn } from '../../assets/icons'
 import Blink from '../../components/Blink'
 import BottomSheet from '../../components/BottomSheet'
 import colors from '../../styles/colors'
-import ChatViewer from '../components/ChatViewer/ChatViewer'
+
 import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
 import MenuItem from '../components/MenuItem'
-import ParticipantListViewer from '../components/ParticipantListViewer/ParticipantListViewer'
-import ParticipantStatsViewer from '../components/ParticipantStatsViewer/ParticipantStatsViewer'
+
 import LargeViewContainer from './LargeView/LargeViewContainer'
 import LocalViewContainer from './LocalViewContainer'
 import MiniViewContainer from './MiniView/MiniViewContainer'
+import ChatViewer from '../components/ChatViewer/ChatViewer'
+import ParticipantListViewer from '../components/ParticipantListViewer'
+import ParticipantStatsViewer from '../components/ParticipantStatsViewer'
 // import VideosdkRPK from '../../../../../VideosdkRPK'
 
 const OneToOneMeetingViewer = () => {
@@ -137,11 +139,11 @@ const OneToOneMeetingViewer = () => {
     )
 }
 
-const HeaderComponent = () => {
+export const HeaderComponent = ({ participantBottomSheetEnable, onPressParticipantIcon }) => {
     const [audioDeviceList, setAudioDeviceList] = useState([])
     const [audioListVisible, showAudioListVisible] = useState(false)
 
-    const { changeWebcam, meetingId, recordingState } = useMeeting({
+    const { changeWebcam, meetingId, recordingState, participants } = useMeeting({
         onError: (data) => {
             const { code, message } = data
             Toast.show(`Error: ${code}: ${message}`)
@@ -256,7 +258,7 @@ const HeaderComponent = () => {
             <TouchableOpacity
                 activeOpacity={0.5}
                 style={{
-                    alignItems: 'center', justifyContent: 'center', marginRight: 8,
+                    alignItems: 'center', justifyContent: 'center',
                     backgroundColor: '#4890E0', borderRadius: 10, padding: 4
                 }}
                 onPress={() => { changeWebcam() }}
@@ -264,7 +266,8 @@ const HeaderComponent = () => {
                 <CameraSwitch height={20} width={20} fill="white" />
             </TouchableOpacity>
 
-            {participantBottomSheetEnable && [...participants.keys()].length > 1 &&
+
+            {participantBottomSheetEnable &&
                 <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={onPressParticipantIcon}
@@ -284,7 +287,7 @@ const HeaderComponent = () => {
     )
 }
 
-const ParticipantComponent = ({ participantCount, localScreenShareOn, participantIds, openStateBottomSheet, presenterId }) => {
+export const ParticipantComponent = ({ participantCount, localScreenShareOn, participantIds, openStateBottomSheet, presenterId }) => {
 
     return (
         <View style={{ flex: 1, marginTop: 8, marginBottom: 12 }}>
@@ -313,7 +316,7 @@ const ParticipantComponent = ({ participantCount, localScreenShareOn, participan
     )
 }
 
-const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, setParticipantStatsViewer, statParticipantId, participantIds, participantListViewer, participantStatsViewer, setStatParticipantId }) => {
+export const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, setParticipantStatsViewer, statParticipantId, participantIds, participantListViewer, participantStatsViewer, setStatParticipantId }) => {
 
     return (
         <BottomSheet
@@ -343,7 +346,7 @@ const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatViewer, 
     )
 }
 
-const EndCallOptionComponent = () => {
+export const EndCallOptionComponent = () => {
     const [isEndCallVisible, setIsEndCallVisible] = useState(false)
 
     const { leave, end } = useMeeting({
@@ -427,7 +430,7 @@ const EndCallOptionComponent = () => {
     )
 }
 
-const MoreOptionComponent = () => {
+export const MoreOptionComponent = () => {
     const [moreOptionVisible, setMoreOptionVisible] = useState(false)
 
     const { recordingState, localScreenShareOn, toggleScreenShare, startRecording, stopRecording, presenterId } = useMeeting({
@@ -500,14 +503,14 @@ const MoreOptionComponent = () => {
 
                 {/* <View style={{ height: 1, backgroundColor: colors.primary["600"] }} />
 
-                <MenuItem
-                    title={"Participants"}
-                    icon={<Participants width={22} height={22} />}
-                    onPress={() => {
+            <MenuItem
+                title={"Participants"}
+                icon={<Participants width={22} height={22} />}
+                onPress={() => {
                     setParticipantStatsViewer(true);
                     setMoreOptionVisible(false)
                     setChatViewer(true)
-                    }}
+                }}
             /> */}
             </>
         </Popover>

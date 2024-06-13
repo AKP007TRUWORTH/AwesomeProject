@@ -17,7 +17,6 @@ import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
 import colors from './styles/colors'
 import _ from 'lodash'
-import OneToOneMeetingViewer from './meeting/OneToOne/OneToOneMeetingViewer'
 
 const JoinScreen = () => {
     const [micOn, setMicOn] = useState(false)

@@ -1,6 +1,6 @@
 import { useMeeting, useParticipant, usePubSub } from '@videosdk.live/react-native-sdk'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Alert, FlatList, Platform, Text, TouchableOpacity, View } from 'react-native'
+import React, { useMemo, useRef, useState } from 'react'
+import { FlatList, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import BottomSheet from '../../components/BottomSheet'
 import { EndCallOptionComponent, HeaderComponent, MoreOptionComponent } from '../OneToOne/OneToOneMeetingViewer'
 import RemoteParticipantPresenter from './RemoteParticipantPresenter'
@@ -8,14 +8,13 @@ import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
 import { MemoizedParticipant, MemoizedParticipantGrid } from './ConfrenceParticipantGrid'
 import { Chat, MicOff, MicOn, VideoOff, VideoOn } from '../../assets/icons'
 import ChatViewer from '../components/ChatViewer/ChatViewer'
-import ParticipantListViewer from '../components/ParticipantListViewer/ParticipantListViewer'
+import ParticipantListViewer from '../components/ParticipantListViewer'
 import colors from '../../styles/colors'
 import LargeViewContainer from '../OneToOne/LargeView/LargeViewContainer'
 import MiniViewContainer from '../OneToOne/MiniView/MiniViewContainer'
 import LocalViewContainer from '../OneToOne/LocalViewContainer'
 import CustomKeyboardAvoidingView from '../../../../components/CustomKeyboardAvoidingView'
 import TextInputContainer from '../components/ChatViewer/TextInput'
-import { Input } from '@ui-kitten/components'
 import moment from 'moment'
 import Hyperlink from 'react-native-hyperlink'
 
@@ -30,13 +29,18 @@ const ConferenceMeetingViewer = () => {
         localMicOn,
         toggleWebcam,
         toggleMic,
-        participants
+        participants,
+        meetingId,
     } = useMeeting({
         onError: (data) => {
             const { code, message } = data
             Toast.show(`Error: ${code}: ${message}`)
         }
     })
+
+    const participantIds = [...participants.values()]
+    console.log(JSON.stringify(participantIds));
+
 
     const options = [
         {
@@ -77,7 +81,12 @@ const ConferenceMeetingViewer = () => {
                 }}
             />
 
-            <ConfrenceMeetingParticipants />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 1 }}
+            >
+                <ConfrenceMeetingParticipants />
+            </ScrollView>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <EndCallOptionComponent />
@@ -149,7 +158,6 @@ const ConfrenceMeetingParticipants = () => {
     const participantCount = allParticipantIds ? allParticipantIds.length : null
     const filterParticipantIds = allParticipantIds.filter((pId) => pId !== localParticipant.id)
 
-
     if (presenterId) {
         return (
             <View style={{ flex: 1, margin: 12, }}>
@@ -203,15 +211,15 @@ const ConfrenceMeetingParticipants = () => {
     }
 
     return (
-        <View style={{ flex: 1, margin: 12, }}>
+        <View style={{ flex: 1, marginVertical: 12 }}>
 
             {participantCount > 1 &&
                 <>
                     {participantCount > 2
-                        ? <MemoizedParticipantGrid participantIds={filterParticipantIds} isPresenting={presenterId != null} />
+                        ? <MemoizedParticipantGrid participantIds={[...allParticipantIds]} isPresenting={presenterId != null} />
                         : <LargeViewContainer participantId={participantIds[1]} />
                     }
-                    <MiniViewContainer participantId={localParticipant.id} />
+                    {participantCount <= 2 && <MiniViewContainer participantId={localParticipant.id} />}
                 </>
             }
 
@@ -260,12 +268,6 @@ const PrivateChatSheet = ({ show, hide, participantId }) => {
 
     const { displayName } = useParticipant(participantId);
 
-    // let OldMessages = ''
-
-
-
-    // console.log(OldMessages);
-
     return (
         <BottomSheet
             title={`Chat with ${displayName}`}
@@ -273,12 +275,12 @@ const PrivateChatSheet = ({ show, hide, participantId }) => {
             onClose={hide}
             childrenStyle={{ padding: 16 }}
         >
-            <ChatViewerPrivate {...{ flatListRef, isSending, participantId }} />
+            <PublicChatSheet {...{ flatListRef, isSending, participantId }} />
         </BottomSheet>
     )
 }
 
-const ChatViewerPrivate = ({ flatListRef, isSending, participantId }) => {
+const PublicChatSheet = ({ flatListRef, isSending, participantId }) => {
 
     const { publish, messages } = usePubSub("CHAT", {
         onMessageReceived: (message) => {

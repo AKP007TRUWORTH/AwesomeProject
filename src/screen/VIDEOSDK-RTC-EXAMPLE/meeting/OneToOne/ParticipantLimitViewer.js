@@ -13,7 +13,7 @@ const ParticipantLimitViewer = () => {
             </Text>
 
             <Text style={{ fontSize: 14, color: 'black', fontWeight: '500', textAlign: "center", marginTop: 8, lineHeight: 24 }}>
-                Maximun 2 participants can join in this meeting. Please try again later ...
+                When you choose the One to One meeting type, only a maximum of two participants can join. If you wish to add more members, please contact to host & change your meeting type.
             </Text>
 
             <Button

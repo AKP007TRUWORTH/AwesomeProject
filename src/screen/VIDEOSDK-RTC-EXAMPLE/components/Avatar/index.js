@@ -9,6 +9,7 @@ export default function Avatar({
   style,
   fontSize,
   containerBackgroundColor,
+  containContainerStyle
 }) {
   return (
     <View
@@ -19,6 +20,7 @@ export default function Avatar({
         alignItems: "center",
         borderRadius: 12,
         overflow: "hidden",
+        ...containContainerStyle
       }}
     >
       <View

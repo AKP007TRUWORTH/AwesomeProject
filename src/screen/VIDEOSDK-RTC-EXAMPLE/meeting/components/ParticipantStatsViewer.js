@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
-import colors from "../../../styles/colors";
-import useParticipantStat from "../../../hooks/useParticipantStat";
+import useParticipantStat from "../../hooks/useParticipantStat";
+import colors from "../../styles/colors";
 
 const ParticipantStatsViewer = ({ participantId }) => {
   const { audioStats, videoStats, displayName, score } = useParticipantStat({ participantId });

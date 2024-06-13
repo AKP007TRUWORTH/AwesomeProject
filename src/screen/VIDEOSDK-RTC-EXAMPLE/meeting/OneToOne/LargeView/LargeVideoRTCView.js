@@ -2,8 +2,9 @@ import React from 'react'
 import { MediaStream, RTCView } from '@videosdk.live/react-native-sdk'
 import Avatar from '../../../components/Avatar'
 import colors from '../../../styles/colors'
+import { DisplayNameComponent, MicStatusComponent } from '../../conference/ParticipantView'
 
-const LargeVideoRTCView = ({ stream, displayName, isOn, objectFit, isLocal = { isLocal } }) => {
+const LargeVideoRTCView = ({ stream, displayName, isOn, objectFit, isLocal = { isLocal }, micOn, isActiveSpeaker }) => {
 
     return isOn && stream ?
         <>
@@ -14,12 +15,12 @@ const LargeVideoRTCView = ({ stream, displayName, isOn, objectFit, isLocal = { i
                 streamURL={new MediaStream([stream.track]).toURL()}
             />
 
-            <DisplayNameComponent isLocal={isLocal} displayName={displayName} style={{ backgroundColor: colors.primary[600] }} />
+            <DisplayNameComponent isLocal={isLocal} displayName={displayName} />
 
             {micOn && isActiveSpeaker
                 ? <View style={{ backgroundColor: '#00000066', position: 'absolute', top: 10, right: 10, borderRadius: 16 }} />
                 : !micOn ?
-                    <MicStatusComponent style={{ backgroundColor: colors.primary[600] }} />
+                    <MicStatusComponent />
                     : null
             }
         </>
@@ -30,14 +31,14 @@ const LargeVideoRTCView = ({ stream, displayName, isOn, objectFit, isLocal = { i
                 fullName={displayName}
                 fontSize={26}
                 style={{
-                    backgroundColor: colors.primary[600],
+                    backgroundColor: colors.primary[700],
                     height: 70, aspectRatio: 1, borderRadius: 40
                 }}
             />
 
-            <DisplayNameComponent isLocal={isLocal} displayName={displayName} style={{ backgroundColor: colors.primary[600] }} />
+            <DisplayNameComponent isLocal={isLocal} displayName={displayName} />
 
-            {!micOn ? <MicStatusComponent style={{ backgroundColor: colors.primary[600] }} /> : null}
+            {!micOn ? <MicStatusComponent /> : null}
         </>
 
 }
