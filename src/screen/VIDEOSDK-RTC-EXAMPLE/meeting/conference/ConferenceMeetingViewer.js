@@ -31,16 +31,13 @@ const ConferenceMeetingViewer = () => {
         toggleMic,
         participants,
         meetingId,
+        localParticipant
     } = useMeeting({
         onError: (data) => {
             const { code, message } = data
             Toast.show(`Error: ${code}: ${message}`)
         }
     })
-
-    const participantIds = [...participants.values()]
-    console.log(JSON.stringify(participantIds));
-
 
     const options = [
         {
@@ -264,7 +261,7 @@ const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIc
 const PrivateChatSheet = ({ show, hide, participantId }) => {
 
     const [isSending, setIsSending] = useState(false);
-    const flatListRef = useRef();
+
 
     const { displayName } = useParticipant(participantId);
 
@@ -275,12 +272,14 @@ const PrivateChatSheet = ({ show, hide, participantId }) => {
             onClose={hide}
             childrenStyle={{ padding: 16 }}
         >
-            <PublicChatSheet {...{ flatListRef, isSending, participantId }} />
+            <PublicChatSheet {...{ isSending, participantId }} />
         </BottomSheet>
     )
 }
 
-const PublicChatSheet = ({ flatListRef, isSending, participantId }) => {
+const PublicChatSheet = ({ isSending, participantId }) => {
+
+    const flatListRef = useRef();
 
     const { publish, messages } = usePubSub("CHAT", {
         onMessageReceived: (message) => {
@@ -297,7 +296,7 @@ const PublicChatSheet = ({ flatListRef, isSending, participantId }) => {
     const localParticipantId = mMeeting?.localParticipant?.id;
 
     const handleSendMessage = () => {
-        publish(message, { persist: true, sendOnly: participantId });
+        publish(message, { persist: true, sendOnly: [participantId] }, { isPrivateMessage: true });
         setMessage("")
         setTimeout(() => {
             scrollToBottom();
@@ -315,7 +314,7 @@ const PublicChatSheet = ({ flatListRef, isSending, participantId }) => {
             >
                 <FlatList
                     ref={flatListRef}
-                    data={messages}
+                    data={messages.filter(m => m?.payload?.isPrivateMessage)}
                     keyExtractor={(_, index) => `${index}_message_list`}
                     style={{ marginVertical: 5 }}
                     scrollEnabled={false}

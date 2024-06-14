@@ -11,8 +11,6 @@ import { DisplayNameComponent, MicStatusComponent } from '../../conference/Parti
 const MiniVideoRTCView = ({ isOn, stream, displayName, isLocal, micOn, participantId, openStatsBottomSheet }) => {
     const { score } = useParticipantStat({ participantId });
 
-    console.log(isLocal);
-
     return (
         <View style={{
             position: 'absolute', bottom: 10, right: 10, height: 160, aspectRatio: 0.7,

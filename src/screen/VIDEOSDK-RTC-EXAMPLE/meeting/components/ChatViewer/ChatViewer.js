@@ -48,7 +48,7 @@ const ChatViewer = () => {
             ref={flatListRef}
             keyExtractor={(_, index) => `${index}_message_list`}
             style={{ marginVertical: 5 }}
-            data={mpubsub.messages}
+            data={mpubsub.messages.filter(m => !m?.payload?.isPrivateMessage)}
             showsVerticalScrollIndicator={false}
             scrollEnabled={false}
             renderItem={({ item, index }) => {

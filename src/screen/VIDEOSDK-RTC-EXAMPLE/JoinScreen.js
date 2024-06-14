@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, } from '@react-navigation/native'
 import { Layout, MenuItem, OverflowMenu } from '@ui-kitten/components'
 import { createCameraVideoTrack, RTCView, switchAudioDevice, useMediaDevice } from '@videosdk.live/react-native-sdk'
 import { BackHandler, Dimensions, Image, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-simple-toast'
 
 import { ArrowIcon, CameraSwitch, MicOff, MicOn, Speaker, VideoOff, VideoOn } from './assets/icons'
-import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import { createMeeting, validateMeeting } from './api/create-meeting'
 import { widthPercentageToDP as wp } from '../../helpers/Responsive'
 import { VIDEO_SDK_TOKEN } from './helper/environment'
 import { isIphoneX } from '../../helpers/iPhoneX'
 
+import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import TextInputContainer from './components/TextInputContainer'
 import BottomSheet from './components/BottomSheet'
 import Button from './components/Button'
@@ -28,24 +28,19 @@ const JoinScreen = () => {
 
     const [audioList, setAudioList] = useState([])
 
-    useFocusEffect(
-        useCallback(() => {
-            getTrack()
-        }, [])
-    )
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         if (videoOn) {
+    //             getTrack()
+    //         }
+    //     }, [])
+    // )
 
     useEffect(() => {
-        getTrack()
-    }, [facingMode])
-
-    const disposeVideoTrack = () => {
-        setTrack((stream) => {
-            stream.getTracks().forEach((track) => {
-                track.enabled = false
-                return track
-            })
-        })
-    }
+        if (videoOn) {
+            getTrack()
+        }
+    }, [facingMode, videoOn])
 
     const getTrack = async () => {
         const track = await createCameraVideoTrack({
@@ -54,6 +49,17 @@ const JoinScreen = () => {
             facingMode: facingMode
         })
         setTrack(track)
+    }
+
+    const disposeVideoTrack = () => {
+        setTrack((stream) => {
+            if (stream) {
+                stream.getTracks().forEach((track) => {
+                    track.enabled = false
+                    return track
+                })
+            }
+        })
     }
 
     const toggleAudioList = () => {
@@ -322,7 +328,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                             }
                             let meetingId = await createMeeting({ token: VIDEO_SDK_TOKEN })
 
-                            disposeVideoTrack()
+                            await disposeVideoTrack()
                             navigation.navigate('MeetingScreen', {
                                 name: name.trim(),
                                 token: VIDEO_SDK_TOKEN,
@@ -402,7 +408,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 })
 
                                 if (validMeetingCode) {
-                                    disposeVideoTrack()
+                                    await disposeVideoTrack()
                                     navigation.navigate('MeetingScreen', {
                                         name: name.trim(),
                                         token: VIDEO_SDK_TOKEN,

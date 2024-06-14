@@ -43,7 +43,7 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
                 keyExtractor={(item) => `${item}_participant`}
                 showsVerticalScrollIndicator={false}
                 columnWrapperStyle={numCols !== 0 ? { gap: 8, } : undefined}
-                contentContainerStyle={{ flex: 1, justifyContent: 'center', gap: 8 }}
+                contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 8 }}
                 renderItem={({ item: participantId }) =>
                     <ParticipantView
                         key={participantId}
@@ -52,7 +52,7 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
                         containerStyle={
                             participantCount == 3
                                 ? { width: widthPercentageToDP(91), height: heightPercentageToDP(25), overflow: 'hidden', borderRadius: 16 }
-                                : { flex: 1, overflow: 'hidden', borderRadius: 16 }
+                                : { width: widthPercentageToDP(44), height: heightPercentageToDP(25), overflow: 'hidden', borderRadius: 16 }
                         }
                     // openStatsBottomSheet={openStatsBottomSheet}
                     />
