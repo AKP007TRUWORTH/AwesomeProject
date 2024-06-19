@@ -283,10 +283,10 @@ const PublicChatSheet = ({ isSending, participantId }) => {
 
     const { publish, messages } = usePubSub("CHAT", {
         onMessageReceived: (message) => {
-            console.log("message", message);
+            // console.log("message", message);
         },
         onOldMessagesReceived: (messages) => {
-            console.log("messages", messages);
+            // console.log("messages", messages);
         }
     });
 
@@ -314,7 +314,15 @@ const PublicChatSheet = ({ isSending, participantId }) => {
             >
                 <FlatList
                     ref={flatListRef}
-                    data={messages.filter(m => m?.payload?.isPrivateMessage)}
+                    data={messages.filter(message => {
+                        if (message.sendOnly) {
+                            return (
+                                message.sendOnly.includes(localParticipantId) &&
+                                message.sendOnly.includes(participantId) && message?.isPrivateMessage
+                            );
+                        }
+                        return (message.senderId === localParticipantId || message.senderId === participantId && message?.isPrivateMessage)
+                    })}
                     keyExtractor={(_, index) => `${index}_message_list`}
                     style={{ marginVertical: 5 }}
                     scrollEnabled={false}
