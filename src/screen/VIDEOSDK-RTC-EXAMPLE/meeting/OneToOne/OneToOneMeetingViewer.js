@@ -266,8 +266,7 @@ export const HeaderComponent = ({ participantBottomSheetEnable, onPressParticipa
                 <CameraSwitch height={20} width={20} fill="white" />
             </TouchableOpacity>
 
-
-            {participantBottomSheetEnable &&
+            {participantBottomSheetEnable && [...participants.keys()].length > 1 &&
                 <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={onPressParticipantIcon}
@@ -279,7 +278,7 @@ export const HeaderComponent = ({ participantBottomSheetEnable, onPressParticipa
                 >
                     <Participants height={18} width={18} fill="white" />
                     <Text style={{ fontSize: 14, color: 'white', marginLeft: 4 }}>
-                        {participants ? [...participants.keys()].length : 1}
+                        {[...participants.keys()].length}
                     </Text>
                 </TouchableOpacity>
             }

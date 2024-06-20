@@ -1,28 +1,32 @@
 import { View, Text } from 'react-native'
 import React, { useEffect, useRef } from 'react'
-import { Modalize } from 'react-native-modalize'
+import RBSheet from 'react-native-raw-bottom-sheet'
 
-const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap, FooterComponent, childrenStyle, ...props }) => {
+const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap, FooterComponent, childrenStyle, customStyles, ...props }) => {
 
-    const modalizeRef = useRef(null)
+    const rbSheetRef = useRef(null)
 
     useEffect(() => {
-        if (visible) return modalizeRef.current.open()
-        return modalizeRef.current.close()
+        if (visible) return rbSheetRef.current.open()
+        return rbSheetRef.current.close()
     }, [visible])
 
     return (
-        <Modalize
-            ref={modalizeRef}
-            adjustToContentHeight={true}
-            disableScrollIfPossible={false}
+        <RBSheet
+            ref={rbSheetRef}
+            closeOnPressMask={true}
+            closeOnPressBack={true}
             onOpen={onOpen}
-            closeOnOverlayTap={closeOnOverlayTap}
-            FooterComponent={FooterComponent}
-            modalTopOffset={120}
-            handlePosition='inside'
-            childrenStyle={childrenStyle}
-            HeaderComponent={
+            customStyles={{
+                container: {
+                    borderTopLeftRadius: 16,
+                    borderTopRightRadius: 16,
+                    ...customStyles
+                }
+            }}
+            {...props}
+        >
+            {title &&
                 <>
                     <Text style={{ fontSize: 16, color: 'black', fontWeight: 'bold', textAlign: 'center', padding: 16, }}>
                         {title}
@@ -30,14 +34,12 @@ const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap
                     <View style={{ height: 1, backgroundColor: '#E5E7EA', width: '100%' }} />
                 </>
             }
-            {...props}
-        >
             {children &&
                 <View style={{ flex: 1 }}>
                     {children}
                 </View>
             }
-        </Modalize>
+        </RBSheet>
     )
 }
 

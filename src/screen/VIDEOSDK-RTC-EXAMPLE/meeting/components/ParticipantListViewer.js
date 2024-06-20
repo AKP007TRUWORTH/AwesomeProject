@@ -18,7 +18,7 @@ const ParticipantListViewer = ({ participantIds, onPressChatIcon }) => {
         data={participantIds}
         keyExtractor={(item) => `${item}_participant`}
         style={{ marginBottom: 4 }}
-        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item, index }) => {
           return <ParticipantListItem key={index} participantId={item} onPressChatIcon={onPressChatIcon} />;
         }}

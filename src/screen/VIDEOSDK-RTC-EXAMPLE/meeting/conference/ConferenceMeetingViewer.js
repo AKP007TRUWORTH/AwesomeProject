@@ -113,7 +113,9 @@ const ConferenceMeetingViewer = () => {
                 onPressChatIcon={(pId) => {
                     setParticipantId(pId)
                     setChatBottomSheetView(false);
-                    showPrivateChatSheet(true);
+                    setTimeout(() => {
+                        showPrivateChatSheet(true);
+                    }, 300);
                 }}
             />
 
@@ -242,7 +244,8 @@ const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIc
             title={isChat ? 'Chat' : undefined}
             visible={show}
             onClose={hide}
-            childrenStyle={{ padding: isChat ? 16 : 0 }}
+            height={isChat ? 400 : 300}
+            customStyles={{ paddingHorizontal: isChat ? 20 : 0 }}
         >
             {participantSheetOption === "CHAT"
                 ? <ChatViewer />
@@ -279,11 +282,11 @@ const PrivateChatSheet = ({ show, hide, participantId }) => {
     const localParticipantId = mMeeting?.localParticipant?.id;
 
     const handleSendMessage = () => {
-        publish(message, { persist: true, sendOnly: [participantId] }, { isPrivateMessage: true });
+        publish(message, { persist: true, sendOnly: [participantId] }, { isPrivateMessage: true, sendOnly: [participantId, localParticipantId] });
         setMessage("")
         setTimeout(() => {
             scrollToBottom();
-        }, 100);
+        }, 300);
     };
 
     const scrollToBottom = () => {
@@ -294,73 +297,68 @@ const PrivateChatSheet = ({ show, hide, participantId }) => {
         <BottomSheet
             visible={show}
             onClose={hide}
-            childrenStyle={{ padding: 16 }}
+            height={400}
+            customStyles={{ paddingHorizontal: 20, }}
             title={`Chat with ${displayName}`}
         >
-            <View style={{ flex: 1 }}>
-                <CustomKeyboardAvoidingView
-                    behavior={Platform.OS == "ios" ? 'padding' : null}
-                >
-                    <FlatList
-                        ref={flatListRef}
-                        data={messages.filter(message => {
-                            if (message.sendOnly) {
-                                return (
-                                    message.sendOnly.includes(localParticipantId) &&
-                                    message.sendOnly.includes(participantId) && message?.isPrivateMessage
-                                );
-                            }
-                            return (message.senderId === localParticipantId || message.senderId === participantId || message?.isPrivateMessage)
-                        })}
-                        keyExtractor={(_, index) => `${index}_message_list`}
-                        style={{ marginVertical: 5 }}
-                        scrollEnabled={false}
-                        keyboardShouldPersistTaps={'handled'}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={({ item, index }) => {
+            <FlatList
+                ref={flatListRef}
+                data={messages.filter(message => {
+                    if (message?.payload?.sendOnly) {
+                        return (
+                            message?.payload?.sendOnly.includes(localParticipantId) &&
+                            message?.payload?.sendOnly.includes(participantId) && message?.payload?.isPrivateMessage
+                        );
+                    }
+                    return message.senderId == localParticipantId && message?.payload?.isPrivateMessage
+                })}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyExtractor={(_, index) => `${index}_message_list`}
+                style={{ marginVertical: 5 }}
+                keyboardShouldPersistTaps={'handled'}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item, index }) => {
 
-                            const { message, senderId, timestamp, senderName } = item;
-                            const localSender = localParticipantId === senderId;
-                            const time = moment(timestamp).format("hh:mm a");
+                    const { message, senderId, timestamp, senderName } = item;
+                    const localSender = localParticipantId === senderId;
+                    const time = moment(timestamp).format("hh:mm a");
 
-                            return (
-                                <View
-                                    key={index}
-                                    style={{
-                                        backgroundColor: colors.primary[600],
-                                        paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
-                                        borderRadius: 10, marginHorizontal: 12,
-                                        alignSelf: localSender ? "flex-end" : "flex-start",
-                                    }}
-                                >
-                                    <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
-                                        {localSender ? "You" : senderName}
-                                    </Text>
-                                    <Hyperlink
-                                        linkDefault={true}
-                                        onPress={(url) => Linking.openURL(url)}
-                                        linkStyle={{ color: "blue" }}
-                                    >
-                                        <Text style={{ fontSize: 14, color: "white", }}>
-                                            {message}
-                                        </Text>
-                                    </Hyperlink>
-                                    <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
-                                        {time}
-                                    </Text>
-                                </View>
-                            )
-                        }}
-                    />
-                </CustomKeyboardAvoidingView>
+                    return (
+                        <View
+                            key={index}
+                            style={{
+                                backgroundColor: colors.primary[600],
+                                paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
+                                borderRadius: 10, marginHorizontal: 12,
+                                alignSelf: localSender ? "flex-end" : "flex-start",
+                            }}
+                        >
+                            <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
+                                {localSender ? "You" : senderName}
+                            </Text>
+                            <Hyperlink
+                                linkDefault={true}
+                                onPress={(url) => Linking.openURL(url)}
+                                linkStyle={{ color: "blue" }}
+                            >
+                                <Text style={{ fontSize: 14, color: "white", }}>
+                                    {message}
+                                </Text>
+                            </Hyperlink>
+                            <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
+                                {time}
+                            </Text>
+                        </View>
+                    )
+                }}
+            />
 
-                <TextInputContainer
-                    message={message}
-                    setMessage={setMessage}
-                    isSending={isSending}
-                    sendMessage={handleSendMessage}
-                />
-            </View>
+            <TextInputContainer
+                message={message}
+                setMessage={setMessage}
+                isSending={isSending}
+                sendMessage={handleSendMessage}
+            />
         </BottomSheet>
     )
 }
