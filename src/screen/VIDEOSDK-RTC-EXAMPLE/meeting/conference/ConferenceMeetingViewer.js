@@ -1,11 +1,11 @@
 import { useMeeting, useParticipant, usePubSub } from '@videosdk.live/react-native-sdk'
 import React, { useMemo, useRef, useState } from 'react'
-import { FlatList, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Linking, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import BottomSheet from '../../components/BottomSheet'
 import { EndCallOptionComponent, HeaderComponent, MoreOptionComponent } from '../OneToOne/OneToOneMeetingViewer'
 import RemoteParticipantPresenter from './RemoteParticipantPresenter'
 import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
-import { MemoizedParticipant, MemoizedParticipantGrid } from './ConfrenceParticipantGrid'
+import { MemoizedParticipant, MemoizedParticipantGrid } from './ConferenceParticipantGrid'
 import { Chat, MicOff, MicOn, VideoOff, VideoOn } from '../../assets/icons'
 import ChatViewer from '../components/ChatViewer/ChatViewer'
 import ParticipantListViewer from '../components/ParticipantListViewer'
@@ -17,12 +17,14 @@ import CustomKeyboardAvoidingView from '../../../../components/CustomKeyboardAvo
 import TextInputContainer from '../components/ChatViewer/TextInput'
 import moment from 'moment'
 import Hyperlink from 'react-native-hyperlink'
+import Toast from 'react-native-simple-toast'
 
 const ConferenceMeetingViewer = () => {
-    const [chatBottomSheetView, setChatBottomSheetView] = useState(false)
     const [privateChatSheet, showPrivateChatSheet] = useState(false)
-    const [participantSheetOption, setParticipantSheetOption] = useState('')
+    const [chatBottomSheetView, setChatBottomSheetView] = useState(false)
+
     const [participantId, setParticipantId] = useState('')
+    const [participantSheetOption, setParticipantSheetOption] = useState('')
 
     const {
         localWebcamOn,
@@ -30,8 +32,6 @@ const ConferenceMeetingViewer = () => {
         toggleWebcam,
         toggleMic,
         participants,
-        meetingId,
-        localParticipant
     } = useMeeting({
         onError: (data) => {
             const { code, message } = data
@@ -82,7 +82,7 @@ const ConferenceMeetingViewer = () => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1 }}
             >
-                <ConfrenceMeetingParticipants />
+                <ConferenceMeetingParticipants />
             </ScrollView>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
@@ -126,7 +126,7 @@ const ConferenceMeetingViewer = () => {
     )
 }
 
-const ConfrenceMeetingParticipants = () => {
+const ConferenceMeetingParticipants = () => {
 
     const { localScreenShareOn, orientation, pinnedParticipants, localParticipant, participants, presenterId, activeSpeakerId } = useMeeting({
         onError: (data) => {
@@ -153,7 +153,7 @@ const ConfrenceMeetingParticipants = () => {
 
     const allParticipantIds = [...participants.keys()]
     const participantCount = allParticipantIds ? allParticipantIds.length : null
-    const filterParticipantIds = allParticipantIds.filter((pId) => pId !== localParticipant.id)
+    // const filterParticipantIds = allParticipantIds.filter((pId) => pId !== localParticipant.id)
 
     if (presenterId) {
         return (
@@ -259,26 +259,12 @@ const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIc
 }
 
 const PrivateChatSheet = ({ show, hide, participantId }) => {
-
     const [isSending, setIsSending] = useState(false);
 
+    const [message, setMessage] = useState("");
 
     const { displayName } = useParticipant(participantId);
-
-    return (
-        <BottomSheet
-            title={`Chat with ${displayName}`}
-            visible={show}
-            onClose={hide}
-            childrenStyle={{ padding: 16 }}
-        >
-            <PublicChatSheet {...{ isSending, participantId }} />
-        </BottomSheet>
-    )
-}
-
-const PublicChatSheet = ({ isSending, participantId }) => {
-
+    const mMeeting = useMeeting({});
     const flatListRef = useRef();
 
     const { publish, messages } = usePubSub("CHAT", {
@@ -290,9 +276,6 @@ const PublicChatSheet = ({ isSending, participantId }) => {
         }
     });
 
-    const [message, setMessage] = useState("");
-
-    const mMeeting = useMeeting({});
     const localParticipantId = mMeeting?.localParticipant?.id;
 
     const handleSendMessage = () => {
@@ -308,74 +291,78 @@ const PublicChatSheet = ({ isSending, participantId }) => {
     };
 
     return (
-        <View style={{ flex: 1 }}>
-            <CustomKeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? 'padding' : null}
-            >
-                <FlatList
-                    ref={flatListRef}
-                    data={messages.filter(message => {
-                        if (message.sendOnly) {
+        <BottomSheet
+            visible={show}
+            onClose={hide}
+            childrenStyle={{ padding: 16 }}
+            title={`Chat with ${displayName}`}
+        >
+            <View style={{ flex: 1 }}>
+                <CustomKeyboardAvoidingView
+                    behavior={Platform.OS == "ios" ? 'padding' : null}
+                >
+                    <FlatList
+                        ref={flatListRef}
+                        data={messages.filter(message => {
+                            if (message.sendOnly) {
+                                return (
+                                    message.sendOnly.includes(localParticipantId) &&
+                                    message.sendOnly.includes(participantId) && message?.isPrivateMessage
+                                );
+                            }
+                            return (message.senderId === localParticipantId || message.senderId === participantId || message?.isPrivateMessage)
+                        })}
+                        keyExtractor={(_, index) => `${index}_message_list`}
+                        style={{ marginVertical: 5 }}
+                        scrollEnabled={false}
+                        keyboardShouldPersistTaps={'handled'}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item, index }) => {
+
+                            const { message, senderId, timestamp, senderName } = item;
+                            const localSender = localParticipantId === senderId;
+                            const time = moment(timestamp).format("hh:mm a");
+
                             return (
-                                message.sendOnly.includes(localParticipantId) &&
-                                message.sendOnly.includes(participantId) && message?.isPrivateMessage
-                            );
-                        }
-                        return (message.senderId === localParticipantId || message.senderId === participantId && message?.isPrivateMessage)
-                    })}
-                    keyExtractor={(_, index) => `${index}_message_list`}
-                    style={{ marginVertical: 5 }}
-                    scrollEnabled={false}
-                    keyboardShouldPersistTaps={'handled'}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item, index }) => {
-
-                        const { message, senderId, timestamp, senderName } = item;
-                        const localSender = localParticipantId === senderId;
-                        const time = moment(timestamp).format("hh:mm a");
-
-                        return (
-                            <View
-                                key={index}
-                                style={{
-                                    backgroundColor: colors.primary[600],
-                                    paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
-                                    borderRadius: 4, borderRadius: 10, marginHorizontal: 12,
-                                    alignSelf: localSender ? "flex-end" : "flex-start",
-                                }}
-                            >
-                                <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
-                                    {localSender ? "You" : senderName}
-                                </Text>
-                                <Hyperlink
-                                    linkDefault={true}
-                                    onPress={(url) => Linking.openURL(url)}
-                                    linkStyle={{ color: "blue" }}
+                                <View
+                                    key={index}
+                                    style={{
+                                        backgroundColor: colors.primary[600],
+                                        paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
+                                        borderRadius: 10, marginHorizontal: 12,
+                                        alignSelf: localSender ? "flex-end" : "flex-start",
+                                    }}
                                 >
-                                    <Text style={{ fontSize: 14, color: "white", }}>
-                                        {message}
+                                    <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
+                                        {localSender ? "You" : senderName}
                                     </Text>
-                                </Hyperlink>
-                                <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
-                                    {time}
-                                </Text>
-                            </View>
-                        )
+                                    <Hyperlink
+                                        linkDefault={true}
+                                        onPress={(url) => Linking.openURL(url)}
+                                        linkStyle={{ color: "blue" }}
+                                    >
+                                        <Text style={{ fontSize: 14, color: "white", }}>
+                                            {message}
+                                        </Text>
+                                    </Hyperlink>
+                                    <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
+                                        {time}
+                                    </Text>
+                                </View>
+                            )
+                        }}
+                    />
+                </CustomKeyboardAvoidingView>
 
-                    }}
+                <TextInputContainer
+                    message={message}
+                    setMessage={setMessage}
+                    isSending={isSending}
+                    sendMessage={handleSendMessage}
                 />
-
-            </CustomKeyboardAvoidingView>
-
-            <TextInputContainer
-                message={message}
-                setMessage={setMessage}
-                isSending={isSending}
-                sendMessage={handleSendMessage}
-            />
-        </View>
+            </View>
+        </BottomSheet>
     )
-
 }
 
 export default ConferenceMeetingViewer

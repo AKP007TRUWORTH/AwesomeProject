@@ -1,22 +1,22 @@
-import { FlatList, View } from 'react-native'
+import { FlatList } from 'react-native'
 import React, { memo, useEffect, useState } from 'react'
-import { useOrientation } from '../../utils/useOrientation'
+// import { useOrientation } from '../../utils/useOrientation'
 
 import ParticipantView from './ParticipantView'
-import PauseInvisibleParticipants from './PauseInvisibleParticipants'
+// import PauseInvisibleParticipants from './PauseInvisibleParticipants'
 import { heightPercentageToDP, widthPercentageToDP } from '../../../../helpers/Responsive'
 
-const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
-    const orientation = useOrientation()
-    const perRow = isPresenting ? 2 : participantCount >= 3 ? 2 : 1
+const ConferenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
+    // const orientation = useOrientation()
+    // const perRow = isPresenting ? 2 : participantCount >= 3 ? 2 : 1
 
     const [numCols, setColumnNo] = useState(0);
 
     const participantCount = participantIds.length
     const quality = participantCount > 4 ? 'low' : participantCount > 2 ? 'med' : 'high'
 
-    const [sheetOpen, setSheetOpen] = useState(false)
-    const [participantId, setParticipantId] = useState('')
+    // const [sheetOpen, setSheetOpen] = useState(false)
+    // const [participantId, setParticipantId] = useState('')
 
 
     useEffect(() => {
@@ -82,7 +82,7 @@ const ConfrenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
 //     }
 // )
 
-export const MemoizedParticipantGrid = memo(ConfrenceParticipantGrid,
+export const MemoizedParticipantGrid = memo(ConferenceParticipantGrid,
     (
         { participantIds, isPresenting },
         { participantIds: oldParticipantIds, isPresenting: oldIsPresenting }

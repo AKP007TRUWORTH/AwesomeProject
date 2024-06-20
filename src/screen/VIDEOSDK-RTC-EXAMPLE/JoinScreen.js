@@ -136,7 +136,6 @@ const HeaderViewComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, t
         )
     }
 
-
     const options = [
         {
             icon: <Speaker fill="white" width={18} height={18} />,
@@ -305,6 +304,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                 </Text>
                             </TouchableOpacity>
                         }
+                        onBackdropPress={() => toggleDropDown(false)}
                     >
                         {meetingTypes.map((item, index) => (
                             <MenuItem
@@ -371,6 +371,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                     </Text>
                                 </TouchableOpacity>
                             }
+                            onBackdropPress={() => toggleDropDown(false)}
                         >
                             {meetingTypes.map((item, index) => (
                                 <MenuItem
