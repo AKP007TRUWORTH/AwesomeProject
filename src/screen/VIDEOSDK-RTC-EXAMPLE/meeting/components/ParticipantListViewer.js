@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity } from "react-native";
 import colors from "../../styles/colors";
 import { MicOff, MicOn, VideoOff, VideoOn, Person, Chat, } from "../../assets/icons";
 import { useParticipant } from "@videosdk.live/react-native-sdk";
-import { _ } from 'lodash'
+import _ from 'lodash'
 
 const ParticipantListViewer = ({ participantIds, onPressChatIcon }) => {
 

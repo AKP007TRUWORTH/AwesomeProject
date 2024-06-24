@@ -62,25 +62,19 @@ const ConferenceParticipantGrid = ({ participantIds = [], isPresenting }) => {
     )
 }
 
-// export const MemoizedParticipant = memo(({ participantId, quality }) => {
-
-
-//     return ()
-// })
-
-// export const MemoizedParticipant = memo(ParticipantView,
-//     (
-//         { participantId, quality, key, openStatsBottomSheet },
-//         {
-//             participantId: oldParticipantId,
-//             quality: oldQuality,
-//             key: oldKey,
-//             openStatsBottomSheet: oldOpenStatsBottomSheet
-//         }
-//     ) => {
-//         participantId === oldParticipantId && quality === oldQuality && key === oldKey && openStatsBottomSheet === oldOpenStatsBottomSheet
-//     }
-// )
+export const MemoizedParticipant = memo(ParticipantView,
+    (
+        { participantId, quality, key, openStatsBottomSheet },
+        {
+            participantId: oldParticipantId,
+            quality: oldQuality,
+            key: oldKey,
+            openStatsBottomSheet: oldOpenStatsBottomSheet
+        }
+    ) => {
+        participantId === oldParticipantId && quality === oldQuality && key === oldKey && openStatsBottomSheet === oldOpenStatsBottomSheet
+    }
+)
 
 export const MemoizedParticipantGrid = memo(ConferenceParticipantGrid,
     (

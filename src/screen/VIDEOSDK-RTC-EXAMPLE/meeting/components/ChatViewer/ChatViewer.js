@@ -4,8 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { FlatList, Linking, Text, View } from "react-native";
 import Hyperlink from "react-native-hyperlink";
 import colors from "../../../styles/colors";
-import { ROBOTO_FONTS } from "../../../styles/fonts";
-import { convertRFValue } from "../../../styles/spacing";
 import TextInputContainer from "./TextInput";
 
 const ChatViewer = () => {
@@ -61,7 +59,7 @@ const ChatViewer = () => {
                 alignSelf: localSender ? "flex-end" : "flex-start",
               }}
             >
-              <Text style={{ fontSize: convertRFValue(12), fontFamily: ROBOTO_FONTS.Roboto, color: "#9A9FA5", fontWeight: "bold" }} >
+              <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
                 {localSender ? "You" : senderName}
               </Text>
               <Hyperlink
@@ -69,11 +67,11 @@ const ChatViewer = () => {
                 onPress={(url) => Linking.openURL(url)}
                 linkStyle={{ color: "blue" }}
               >
-                <Text style={{ fontSize: convertRFValue(14), color: "white", fontFamily: ROBOTO_FONTS.RobotoMedium }}>
+                <Text style={{ fontSize: 14, color: "white", }}>
                   {message}
                 </Text>
               </Hyperlink>
-              <Text style={{ color: "grey", fontSize: convertRFValue(10), fontFamily: ROBOTO_FONTS.Roboto, alignSelf: "flex-end", marginTop: 4 }}>
+              <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
                 {time}
               </Text>
             </View>

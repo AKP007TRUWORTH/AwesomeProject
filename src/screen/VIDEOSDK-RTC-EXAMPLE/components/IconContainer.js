@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-import { DownArrow } from "../../assets/icons";
+import { DownArrow } from "../assets/icons";
 
 const IconContainer = ({ backgroundColor, onPress, onDropDownPress, Icon, style, isDropDown }) => {
 

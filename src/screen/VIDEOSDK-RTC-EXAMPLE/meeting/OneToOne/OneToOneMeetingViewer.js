@@ -7,11 +7,11 @@ import Toast from 'react-native-simple-toast'
 import RecordingAnimation from '../../assets/animation/recording_lottie.json'
 import { CallEnd, CameraSwitch, Chat, Copy, EndForAll, Leave, MicOff, MicOn, More, Participants, Recording, ScreenShare, Speaker, VideoOff, VideoOn } from '../../assets/icons'
 import Blink from '../../components/Blink'
-import BottomSheet from '../../components/BottomSheet'
+import { BottomSheet } from '../../components/BottomSheet'
 import colors from '../../styles/colors'
 
 import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
-import MenuItem from '../components/MenuItem'
+import { MenuItem } from '../components/MenuItem'
 
 import LargeViewContainer from './LargeView/LargeViewContainer'
 import LocalViewContainer from './LocalViewContainer'
@@ -272,13 +272,13 @@ export const HeaderComponent = ({ participantBottomSheetEnable, onPressParticipa
                     onPress={onPressParticipantIcon}
                     style={{
                         flexDirection: 'row',
-                        alignItems: 'center', justifyContent: 'center', marginLeft: 8,
+                        alignItems: 'center', justifyContent: 'center', marginLeft: 16,
                         backgroundColor: '#4890E0', borderRadius: 10, padding: 4
                     }}
                 >
                     <Participants height={18} width={18} fill="white" />
                     <Text style={{ fontSize: 14, color: 'white', marginLeft: 4 }}>
-                        {[...participants.keys()].length}
+                        {[...participants.keys()].length - 1}
                     </Text>
                 </TouchableOpacity>
             }
@@ -413,11 +413,11 @@ export const EndCallOptionComponent = () => {
 
                     <View style={{ gap: 4 }}>
                         <Text style={{ fontSize: 12, color: 'white', }}>
-                            Leave
+                            End
                         </Text>
 
                         <Text style={{ fontSize: 12, color: 'white', }}>
-                            Only you will leave the call
+                            End call for all participants.
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -426,7 +426,7 @@ export const EndCallOptionComponent = () => {
     )
 }
 
-export const MoreOptionComponent = () => {
+export const MoreOptionComponent = ({ onParticipantsPress, meetingType }) => {
     const [moreOptionVisible, setMoreOptionVisible] = useState(false)
 
     const { recordingState, localScreenShareOn, toggleScreenShare, startRecording, stopRecording, presenterId } = useMeeting({
@@ -464,7 +464,8 @@ export const MoreOptionComponent = () => {
                             : recordingState === Constants.recordingEvents.RECORDING_STOPPING
                                 ? "Stopping"
                                 : "Stop"
-                        } Recording`}
+                        } Recording`
+                    }
                     icon={<Recording width={22} height={22} />}
                     onPress={() => {
                         if (
@@ -497,17 +498,17 @@ export const MoreOptionComponent = () => {
                     />
                 )}
 
-                {/* <View style={{ height: 1, backgroundColor: colors.primary["600"] }} />
+                {meetingType === "group" &&
+                    <>
+                        <View style={{ height: 1, backgroundColor: colors.primary["600"] }} />
 
-            <MenuItem
-                title={"Participants"}
-                icon={<Participants width={22} height={22} />}
-                onPress={() => {
-                    setParticipantStatsViewer(true);
-                    setMoreOptionVisible(false)
-                    setChatViewer(true)
-                }}
-            /> */}
+                        <MenuItem
+                            title={"Participants"}
+                            icon={<Participants width={22} height={22} />}
+                            onPress={() => { onParticipantsPress(); setMoreOptionVisible(false) }}
+                        />
+                    </>
+                }
             </>
         </Popover>
     )

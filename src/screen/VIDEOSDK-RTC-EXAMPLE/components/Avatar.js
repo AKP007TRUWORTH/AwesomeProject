@@ -1,16 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from "react";
 import { View, Text } from "react-native";
-import colors from "../../styles/colors";
-import { convertRFValue } from "../../styles/spacing";
+import colors from "../styles/colors";
 
-export default function Avatar({
-  fullName,
-  style,
-  fontSize,
-  containerBackgroundColor,
-  containContainerStyle
-}) {
+export const Avatar = ({ fullName, style, fontSize, containerBackgroundColor, containContainerStyle }) => {
   return (
     <View
       style={{
@@ -33,7 +26,7 @@ export default function Avatar({
       >
         <Text
           style={{
-            fontSize: convertRFValue(fontSize),
+            fontSize: fontSize,
             color: colors.primary[100],
           }}
         >

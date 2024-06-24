@@ -2,7 +2,6 @@ import React from "react";
 import { View, TextInput, TouchableOpacity } from "react-native";
 import colors from "../../../styles/colors";
 import { Send } from "../../../assets/icons";
-import { ROBOTO_FONTS } from "../../../styles/fonts";
 import { useStandardHeight } from "../../../styles/spacing";
 
 export default function TextInputContainer({
@@ -38,7 +37,6 @@ export default function TextInputContainer({
               flex: 1,
               color: "white",
               marginLeft: 12,
-              fontFamily: ROBOTO_FONTS.RobotoMedium,
               margin: 4,
               padding: 4,
             }}

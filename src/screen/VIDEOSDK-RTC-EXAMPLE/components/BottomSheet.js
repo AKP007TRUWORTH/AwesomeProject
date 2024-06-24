@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import RBSheet from 'react-native-raw-bottom-sheet'
 
-const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap, FooterComponent, childrenStyle, customStyles, ...props }) => {
+export const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap, FooterComponent, childrenStyle, customStyles, ...props }) => {
 
     const rbSheetRef = useRef(null)
 
@@ -42,5 +42,3 @@ const BottomSheet = ({ visible, hide, title, children, onOpen, closeOnOverlayTap
         </RBSheet>
     )
 }
-
-export default BottomSheet

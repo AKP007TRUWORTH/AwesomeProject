@@ -1,6 +1,6 @@
 import React from 'react'
 import { MediaStream, RTCView } from '@videosdk.live/react-native-sdk'
-import Avatar from '../../../components/Avatar'
+import { Avatar } from '../../../components/Avatar'
 import colors from '../../../styles/colors'
 import { DisplayNameComponent, MicStatusComponent } from '../../conference/ParticipantView'
 

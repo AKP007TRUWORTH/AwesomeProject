@@ -4,7 +4,7 @@ import { MediaStream, RTCView, useParticipant } from '@videosdk.live/react-nativ
 import useParticipantStat from '../../hooks/useParticipantStat'
 import { MicOff, NetworkIcon } from '../../assets/icons'
 import colors from '../../styles/colors'
-import Avatar from '../../components/Avatar'
+import { Avatar } from '../../components/Avatar'
 
 const ParticipantView = ({ participantId, quality, openStatsBottomSheet, containerStyle }) => {
     const { displayName, webcamStream, webcamOn, micOn, isLocal, setQuality, isActiveSpeaker, getVideoStats, isPresenting, micStream, getShareStats, getAudioStats } = useParticipant(participantId, {})
@@ -74,7 +74,7 @@ const ParticipantView = ({ participantId, quality, openStatsBottomSheet, contain
                 fullName={displayName}
                 containerBackgroundColor={colors.primary[600]}
                 fontSize={24}
-                containContainerStyle={containerStyle.height ? { flex: 1 } : { flex: 0, }}
+                containContainerStyle={containerStyle?.height ? { flex: 1 } : { flex: 0, }}
                 style={{
                     aspectRatio: 1,
                     borderRadius: 40, margin: 50,

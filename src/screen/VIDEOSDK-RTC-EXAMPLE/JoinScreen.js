@@ -13,8 +13,8 @@ import { isIphoneX } from '../../helpers/iPhoneX'
 
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import TextInputContainer from './components/TextInputContainer'
-import BottomSheet from './components/BottomSheet'
-import Button from './components/Button'
+import { BottomSheet } from './components/BottomSheet'
+import { Button } from './components/Button'
 import colors from './styles/colors'
 import _ from 'lodash'
 
@@ -69,7 +69,7 @@ const JoinScreen = () => {
     return (
         <Layout style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <CustomKeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? 'padding' : null}
+                behavior={Platform.OS == "ios" ? 'padding' : 'height'}
             >
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -267,13 +267,27 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
         }, [isVisibleCreateMeetingContainer, isVisibleJoinMeetingContainer])
     )
 
+    const meetingOptions = [
+        {
+            text: 'Create Meeting',
+            onPress: () => setIsVisibleCreateMeetingContainer(true),
+        },
+        {
+            text: 'Join Meeting',
+            onPress: () => setIsVisibleJoinMeetingContainer(true),
+        }
+    ]
+
     return (
         <View style={{ marginHorizontal: 32, marginTop: 28 }}>
             {!isVisibleCreateMeetingContainer && !isVisibleJoinMeetingContainer &&
-                <>
-                    <Button text={"Create Meeting"} onPress={() => setIsVisibleCreateMeetingContainer(true)} />
-                    <Button text={"Join Meeting"} onPress={() => setIsVisibleJoinMeetingContainer(true)} />
-                </>
+                meetingOptions.map((item, index) => (
+                    <Button
+                        key={index}
+                        text={item.text}
+                        onPress={item.onPress}
+                    />
+                ))
             }
 
             {isVisibleCreateMeetingContainer ?
@@ -299,7 +313,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                     backgroundColor: "#4890E0", borderRadius: 12, marginVertical: 12,
                                 }}
                             >
-                                <Text style={{ color: 'white' }}>
+                                <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>
                                     {meetingType.value}
                                 </Text>
                             </TouchableOpacity>
@@ -366,7 +380,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                                         borderRadius: 12, marginVertical: 12,
                                     }}
                                 >
-                                    <Text style={{ color: 'white' }}>
+                                    <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>
                                         {meetingType.value}
                                     </Text>
                                 </TouchableOpacity>
@@ -425,7 +439,7 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
                     </>
                     : null
             }
-        </View>
+        </View >
     )
 }
 
