@@ -327,11 +327,8 @@ export const ChatViewerSheet = ({ chatViewer, setParticipantListViewer, setChatV
                 setParticipantStatsViewer(false)
                 setStatParticipantId("")
             }}
-            scrollViewProps={{
-                showsVerticalScrollIndicator: false,
-                // contentContainerStyle: { flexGrow: 1, padding: 16 }
-            }}
-
+            height={400}
+            customStyles={{ paddingHorizontal: 20, }}
         >
             {chatViewer ?
                 <ChatViewer />

@@ -38,17 +38,20 @@ const Home = ({ navigation }) => {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Button
                 activeOpacity={0.8}
-                onPress={checkForUpdates} >
+                onPress={checkForUpdates}
+            >
                 Check For Update
             </Button>
             <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
                 Code push version 2.0 🚀
             </Text>
+
             <Button
+                style={{ marginHorizontal: 20, justifyContent: 'center', alignItems: 'center' }}
                 activeOpacity={0.8}
                 onPress={() => navigation.navigate('VideoSdkNavigator')}
             >
-                Video package work Click me! 🎥
+                Check out the Video SDK Live 🎦 package by clicking here!
             </Button>
         </View >
     )
