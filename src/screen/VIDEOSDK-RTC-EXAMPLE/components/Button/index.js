@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
 import colors from "../../styles/colors";
 import { ROBOTO_FONTS } from "../../styles/fonts";
 
@@ -9,6 +9,7 @@ const Button = ({
   onPress,
   style = {},
   textStyle = {},
+  loading = false
 }) => {
   return (
     <TouchableOpacity
@@ -24,16 +25,19 @@ const Button = ({
         ...style,
       }}
     >
-      <Text
-        style={{
-          color: colors.primary["100"],
-          fontSize: 16,
-          fontFamily: ROBOTO_FONTS.RobotoBold,
-          ...textStyle,
-        }}
-      >
-        {text}
-      </Text>
+      {loading
+        ? <ActivityIndicator size="small" color="#FFFF" />
+        : <Text
+          style={{
+            color: colors.primary["100"],
+            fontSize: 16,
+            fontFamily: ROBOTO_FONTS.RobotoBold,
+            ...textStyle,
+          }}
+        >
+          {text}
+        </Text>
+      }
     </TouchableOpacity>
   );
 };

@@ -240,12 +240,13 @@ const RTCViewComponent = ({ tracks, micOn, setMicOn, videoOn, setVideoOn }) => {
 }
 
 const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) => {
-    const [isVisibleCreateMeetingContainer, setIsVisibleCreateMeetingContainer] = useState(false)
-    const [isVisibleJoinMeetingContainer, setIsVisibleJoinMeetingContainer] = useState(false)
-    const [showDropDown, toggleDropDown] = useState(false)
+    const [isCreateMeetingClicked, setIsCreateMeetingClicked] = useState(false)
+    const [isJoinMeetingClicked, setIsJoinMeetingClicked] = useState(false)
+    const [loading, setLoading] = useState(false)
 
-    const [name, setName] = useState('')
     const [meetingId, setMeetingId] = useState('')
+
+    const [participantName, setParticipantName] = useState('')
     const [meetingType, setMeetingType] = useState(meetingTypes[0])
 
     const navigation = useNavigation()
@@ -253,9 +254,9 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
     useFocusEffect(
         useCallback(() => {
             const onBackPress = () => {
-                if (!isVisibleCreateMeetingContainer && !isVisibleJoinMeetingContainer) {
-                    setIsVisibleCreateMeetingContainer(false)
-                    setIsVisibleJoinMeetingContainer(false)
+                if (!isCreateMeetingClicked && !isJoinMeetingClicked) {
+                    setIsCreateMeetingClicked(false)
+                    setIsJoinMeetingClicked(false)
                     return true
                 } else {
                     return false
@@ -265,165 +266,144 @@ const BottomViewComponent = ({ disposeVideoTrack, micOn, videoOn, facingMode }) 
             const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress)
 
             return () => subscription.remove()
-        }, [isVisibleCreateMeetingContainer, isVisibleJoinMeetingContainer])
+        }, [isCreateMeetingClicked, isJoinMeetingClicked])
     )
+
+    const onCreateMeeting = async () => {
+        if (participantName.length <= 0) {
+            Toast.show("Enter your name")
+            return
+        }
+
+        setLoading(true);
+
+        const meetingId = onCreateMeeting({ token: VIDEO_SDK_TOKEN })
+
+        if (meetingId) {
+            await disposeVideoTrack()
+            navigation.navigate('MeetingScreen', {
+                name: participantName.trim(),
+                token: VIDEO_SDK_TOKEN,
+                meetingId,
+                micEnabled: micOn,
+                webCamEnabled: videoOn,
+                meetingType,
+                defaultCamera: facingMode === 'user' ? 'front' : 'back'
+            });
+        } else {
+            Toast.show('Meeting Id not getting')
+        }
+
+        setLoading(false)
+    }
+
+    const onJoinMeeting = async () => {
+        if (participantName.trim().length <= 0) {
+            Toast.show("Please Enter your name")
+            return
+        }
+
+        if (meetingId.trim().length <= 0) {
+            Toast.show("Please Enter your meeting code")
+            return
+        }
+
+        setLoading(true)
+
+        let validMeetingCode = await validateMeeting({
+            token: VIDEO_SDK_TOKEN,
+            meetingId: meetingId.trim()
+        })
+
+        if (validMeetingCode) {
+            await disposeVideoTrack()
+            navigation.navigate('MeetingScreen', {
+                name: participantName.trim(),
+                token: VIDEO_SDK_TOKEN,
+                meetingId: meetingId.trim(),
+                micEnabled: micOn,
+                webCamEnabled: videoOn,
+                meetingType: meetingType.key,
+                defaultCamera: facingMode === 'user' ? 'front' : 'back'
+            })
+        }
+
+        setLoading(false)
+    }
+
+    const meetingOption = [
+        {
+            buttonText: "Create meeting",
+            onClick: () => setIsCreateMeetingClicked(true)
+        },
+        {
+            buttonText: "Join a meeting",
+            onClick: () => setIsJoinMeetingClicked(true)
+        }
+    ]
 
     return (
         <View style={{ marginHorizontal: 32, marginTop: 28 }}>
-            {!isVisibleCreateMeetingContainer && !isVisibleJoinMeetingContainer &&
+            {!isCreateMeetingClicked && !isJoinMeetingClicked &&
                 <>
-                    <Button text={"Create Meeting"} onPress={() => setIsVisibleCreateMeetingContainer(true)} />
-                    <Button text={"Join Meeting"} onPress={() => setIsVisibleJoinMeetingContainer(true)} />
+                    {meetingOption.map((item, index) => (
+                        <Button
+                            key={index}
+                            text={item.buttonText}
+                            onPress={item.onClick}
+                        />
+                    ))}
                 </>
             }
 
-            {isVisibleCreateMeetingContainer ?
+            {isCreateMeetingClicked &&
                 <>
-                    <OverflowMenu
-                        visible={showDropDown}
-                        style={{
-                            marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : 5 : 5,
-                            width: Dimensions.get('window').width - 100, paddingHorizontal: 16, paddingVertical: 8,
-                            borderRadius: 8, elevation: 3, shadowOffset: { width: 0, height: 0 },
-                            shadowColor: '#CED2D6', shadowOpacity: 0.15,
-                        }}
-                        onSelect={(index) => {
-                            toggleDropDown(false)
-                            setMeetingType(meetingTypes[index.row])
-                        }}
-                        anchor={() =>
-                            <TouchableOpacity
-                                activeOpacity={0.8}
-                                onPress={() => toggleDropDown(!showDropDown)}
-                                style={{
-                                    height: 50, justifyContent: "center", alignItems: "center",
-                                    backgroundColor: "#4890E0", borderRadius: 12, marginVertical: 12,
-                                }}
-                            >
-                                <Text style={{ color: 'white' }}>
-                                    {meetingType.value}
-                                </Text>
-                            </TouchableOpacity>
-                        }
-                    >
-                        {meetingTypes.map((item, index) => (
-                            <MenuItem
-                                key={item.key}
-                                title={item.value}
-                            />
-                        ))}
-                    </OverflowMenu>
+                    <MeetingTypeSelection
+                        meetingType={meetingType}
+                        setMeetingType={setMeetingType}
+                    />
 
                     <TextInputContainer
                         placeholder={"Enter your name"}
-                        value={name}
-                        setValue={setName}
+                        value={participantName}
+                        setValue={setParticipantName}
                     />
 
                     <Button
-                        text={"Join a Meeting"}
-                        onPress={async () => {
-                            if (name.length <= 0) {
-                                return Toast.show("Enter your name")
-                            }
-                            let meetingId = await createMeeting({ token: VIDEO_SDK_TOKEN })
-
-                            await disposeVideoTrack()
-                            navigation.navigate('MeetingScreen', {
-                                name: name.trim(),
-                                token: VIDEO_SDK_TOKEN,
-                                meetingId,
-                                micEnabled: micOn,
-                                webCamEnabled: videoOn,
-                                meetingType,
-                                defaultCamera: facingMode === 'user' ? 'front' : 'back'
-                            })
-                        }}
+                        text={"Create meeting"}
+                        onPress={onCreateMeeting}
+                        loading={loading}
                     />
                 </>
-                : isVisibleJoinMeetingContainer
-                    ?
-                    <>
-                        <OverflowMenu
-                            visible={showDropDown}
-                            style={{
-                                marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : 5 : 5,
-                                width: Dimensions.get('window').width - 100, paddingHorizontal: 16, paddingVertical: 8,
-                                borderRadius: 8, elevation: 3, shadowOffset: { width: 0, height: 0 },
-                                shadowColor: '#CED2D6', shadowOpacity: 0.15,
-                            }}
-                            onSelect={(index) => {
-                                toggleDropDown(false)
-                                setMeetingType(meetingTypes[index.row])
-                            }}
-                            anchor={() =>
-                                <TouchableOpacity
-                                    activeOpacity={0.8}
-                                    onPress={() => toggleDropDown(!showDropDown)}
-                                    style={{
-                                        height: 50, justifyContent: "center",
-                                        alignItems: "center", backgroundColor: "#4890E0",
-                                        borderRadius: 12, marginVertical: 12,
-                                    }}
-                                >
-                                    <Text style={{ color: 'white' }}>
-                                        {meetingType.value}
-                                    </Text>
-                                </TouchableOpacity>
-                            }
-                        >
-                            {meetingTypes.map((item, index) => (
-                                <MenuItem
-                                    key={item.key}
-                                    title={item.value}
-                                />
-                            ))}
-                        </OverflowMenu>
-
-                        <TextInputContainer
-                            placeholder={"Enter your name"}
-                            value={name}
-                            setValue={setName}
-                        />
-
-                        <TextInputContainer
-                            placeholder={"Enter your meeting code"}
-                            value={meetingId}
-                            setValue={setMeetingId}
-                        />
-
-                        <Button
-                            text={"Join a Meeting"}
-                            onPress={async () => {
-                                if (name.trim().length <= 0) {
-                                    return Toast.show("Please Enter your name")
-                                }
-                                if (meetingId.trim().length <= 0) {
-                                    return Toast.show("Please Enter your meeting code")
-                                }
-
-                                let validMeetingCode = await validateMeeting({
-                                    token: VIDEO_SDK_TOKEN,
-                                    meetingId: meetingId.trim()
-                                })
-
-                                if (validMeetingCode) {
-                                    await disposeVideoTrack()
-                                    navigation.navigate('MeetingScreen', {
-                                        name: name.trim(),
-                                        token: VIDEO_SDK_TOKEN,
-                                        meetingId: meetingId.trim(),
-                                        micEnabled: micOn,
-                                        webCamEnabled: videoOn,
-                                        meetingType: meetingType.key,
-                                        defaultCamera: facingMode === 'user' ? 'front' : 'back'
-                                    })
-                                }
-                            }}
-                        />
-                    </>
-                    : null
             }
+
+            {isJoinMeetingClicked &&
+                <>
+                    <MeetingTypeSelection
+                        meetingType={meetingType}
+                        setMeetingType={setMeetingType}
+                    />
+
+                    <TextInputContainer
+                        placeholder={"Enter your name"}
+                        value={participantName}
+                        setValue={setParticipantName}
+                    />
+
+                    <TextInputContainer
+                        placeholder={"Enter your meeting code"}
+                        value={meetingId}
+                        setValue={setMeetingId}
+                    />
+
+                    <Button
+                        text={"Join Meeting"}
+                        onPress={onJoinMeeting}
+                        loading={loading}
+                    />
+                </>
+            }
+
         </View>
     )
 }
@@ -464,6 +444,48 @@ const AudioListBottomSheet = ({ audioList, toggleAudioList, audioListVisible }) 
                 }
             }}
         />
+    )
+}
+
+const MeetingTypeSelection = ({ meetingType, setMeetingType }) => {
+    const [showDropDown, toggleDropDown] = useState(false)
+
+    return (
+        <OverflowMenu
+            visible={showDropDown}
+            style={{
+                marginTop: Platform.OS == 'ios' ? isIphoneX() ? wp('-11%') : 5 : 5,
+                width: Dimensions.get('window').width - 100, paddingHorizontal: 16, paddingVertical: 8,
+                borderRadius: 8, elevation: 3, shadowOffset: { width: 0, height: 0 },
+                shadowColor: '#CED2D6', shadowOpacity: 0.15,
+            }}
+            onSelect={(index) => {
+                toggleDropDown(false)
+                setMeetingType(meetingTypes[index.row])
+            }}
+            anchor={() =>
+                <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() => toggleDropDown(!showDropDown)}
+                    style={{
+                        height: 50, justifyContent: "center",
+                        alignItems: "center", backgroundColor: "#4890E0",
+                        borderRadius: 12, marginVertical: 12,
+                    }}
+                >
+                    <Text style={{ color: 'white' }}>
+                        {meetingType.value}
+                    </Text>
+                </TouchableOpacity>
+            }
+        >
+            {meetingTypes.map((item, index) => (
+                <MenuItem
+                    key={item.key}
+                    title={item.value}
+                />
+            ))}
+        </OverflowMenu>
     )
 }
 
