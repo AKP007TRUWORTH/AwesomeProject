@@ -4,7 +4,7 @@ import { View, TouchableOpacity } from 'react-native'
 import React from 'react'
 
 import { NetworkIcon } from '../../../assets/icons'
-import Avatar from '../../../components/Avatar'
+import { Avatar } from '../../../components/Avatar'
 import colors from '../../../styles/colors'
 import { DisplayNameComponent, MicStatusComponent } from '../../conference/ParticipantView'
 

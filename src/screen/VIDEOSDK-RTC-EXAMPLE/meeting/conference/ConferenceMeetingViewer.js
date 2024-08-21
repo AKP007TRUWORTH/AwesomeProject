@@ -1,38 +1,34 @@
 import { useMeeting, useParticipant, usePubSub } from '@videosdk.live/react-native-sdk'
+import { FlatList, Linking, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import React, { useMemo, useRef, useState } from 'react'
-import { FlatList, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import BottomSheet from '../../components/BottomSheet'
-import { EndCallOptionComponent, HeaderComponent, MoreOptionComponent } from '../OneToOne/OneToOneMeetingViewer'
-import RemoteParticipantPresenter from './RemoteParticipantPresenter'
-import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
-import { MemoizedParticipant, MemoizedParticipantGrid } from './ConfrenceParticipantGrid'
-import { Chat, MicOff, MicOn, VideoOff, VideoOn } from '../../assets/icons'
-import ChatViewer from '../components/ChatViewer/ChatViewer'
-import ParticipantListViewer from '../components/ParticipantListViewer'
-import colors from '../../styles/colors'
-import LargeViewContainer from '../OneToOne/LargeView/LargeViewContainer'
-import MiniViewContainer from '../OneToOne/MiniView/MiniViewContainer'
-import LocalViewContainer from '../OneToOne/LocalViewContainer'
-import CustomKeyboardAvoidingView from '../../../../components/CustomKeyboardAvoidingView'
-import TextInputContainer from '../components/ChatViewer/TextInput'
-import moment from 'moment'
 import Hyperlink from 'react-native-hyperlink'
+import Toast from 'react-native-simple-toast'
+import moment from 'moment'
+
+import { EndCallOptionComponent, HeaderComponent, MoreOptionComponent } from '../OneToOne/OneToOneMeetingViewer'
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from '../../../../helpers/Responsive'
+import { MemoizedParticipant, MemoizedParticipantGrid } from './ConferenceParticipantGrid'
+import { Chat, MicOff, MicOn, VideoOff, VideoOn } from '../../assets/icons'
+import { BottomSheet } from '../../components/BottomSheet'
+
+import LocalParticipantPresenter from '../components/LocalParticipantPresenter'
+import LargeViewContainer from '../OneToOne/LargeView/LargeViewContainer'
+import ParticipantListViewer from '../components/ParticipantListViewer'
+import MiniViewContainer from '../OneToOne/MiniView/MiniViewContainer'
+import RemoteParticipantPresenter from './RemoteParticipantPresenter'
+import TextInputContainer from '../components/ChatViewer/TextInput'
+import LocalViewContainer from '../OneToOne/LocalViewContainer'
+import ChatViewer from '../components/ChatViewer/ChatViewer'
+import colors from '../../styles/colors'
 
 const ConferenceMeetingViewer = () => {
-    const [chatBottomSheetView, setChatBottomSheetView] = useState(false)
     const [privateChatSheet, showPrivateChatSheet] = useState(false)
-    const [participantSheetOption, setParticipantSheetOption] = useState('')
-    const [participantId, setParticipantId] = useState('')
+    const [chatBottomSheetView, setChatBottomSheetView] = useState(false)
 
-    const {
-        localWebcamOn,
-        localMicOn,
-        toggleWebcam,
-        toggleMic,
-        participants,
-        meetingId,
-        localParticipant
-    } = useMeeting({
+    const [participantId, setParticipantId] = useState('')
+    const [participantSheetOption, setParticipantSheetOption] = useState('')
+
+    const { participants, localWebcamOn, localMicOn, toggleWebcam, toggleMic } = useMeeting({
         onError: (data) => {
             const { code, message } = data
             Toast.show(`Error: ${code}: ${message}`)
@@ -78,12 +74,7 @@ const ConferenceMeetingViewer = () => {
                 }}
             />
 
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
-            >
-                <ConfrenceMeetingParticipants />
-            </ScrollView>
+            <ConferenceMeetingParticipants />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 <EndCallOptionComponent />
@@ -103,17 +94,23 @@ const ConferenceMeetingViewer = () => {
                     </TouchableOpacity>
                 )}
 
-                <MoreOptionComponent />
+                <MoreOptionComponent
+                    meetingType={'group'}
+                    onParticipantsPress={() => {
+                        setParticipantSheetOption('PARTICIPANT_LIST')
+                        setChatBottomSheetView(true)
+                    }}
+                />
             </View>
 
-            <ChatBottomComponent
+            <PublicChatAndParticipantListViewerSheet
                 show={chatBottomSheetView}
                 hide={() => setChatBottomSheetView(false)}
                 participantSheetOption={participantSheetOption}
                 onPressChatIcon={(pId) => {
                     setParticipantId(pId)
                     setChatBottomSheetView(false);
-                    showPrivateChatSheet(true);
+                    setTimeout(() => { showPrivateChatSheet(true); }, 300);
                 }}
             />
 
@@ -126,7 +123,7 @@ const ConferenceMeetingViewer = () => {
     )
 }
 
-const ConfrenceMeetingParticipants = () => {
+const ConferenceMeetingParticipants = () => {
 
     const { localScreenShareOn, orientation, pinnedParticipants, localParticipant, participants, presenterId, activeSpeakerId } = useMeeting({
         onError: (data) => {
@@ -153,7 +150,6 @@ const ConfrenceMeetingParticipants = () => {
 
     const allParticipantIds = [...participants.keys()]
     const participantCount = allParticipantIds ? allParticipantIds.length : null
-    const filterParticipantIds = allParticipantIds.filter((pId) => pId !== localParticipant.id)
 
     if (presenterId) {
         return (
@@ -172,12 +168,13 @@ const ConfrenceMeetingParticipants = () => {
                             data={[...allParticipantIds]}
                             horizontal={true}
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ gap: 8, }}
+                            contentContainerStyle={{ gap: 8, alignItems: 'center' }}
                             renderItem={({ item: participantId }) => (
                                 <MemoizedParticipant
                                     key={participantId}
                                     participantId={participantId}
                                     quality={'high'}
+                                    containerStyle={{ width: wp(41), height: hp(22), overflow: 'hidden', borderRadius: 16 }}
                                 />
                             )}
                         />
@@ -185,18 +182,19 @@ const ConfrenceMeetingParticipants = () => {
                     : presenterId && localScreenShareOn
                         ?
                         <>
-                            <LocalParticipantPresenter />
+                            <LocalParticipantPresenter containerStyle={{ height: '70%' }} />
 
                             <FlatList
                                 data={[...allParticipantIds]}
                                 horizontal={true}
                                 showsHorizontalScrollIndicator={false}
-                                contentContainerStyle={{ gap: 8, }}
+                                contentContainerStyle={{ gap: 8, alignItems: 'center' }}
                                 renderItem={({ item: participantId }) => (
                                     <MemoizedParticipant
                                         key={participantId}
                                         participantId={participantId}
                                         quality={'high'}
+                                        containerStyle={{ width: wp(41), height: hp(22), overflow: 'hidden', borderRadius: 16 }}
                                     />
                                 )}
                             />
@@ -208,8 +206,10 @@ const ConfrenceMeetingParticipants = () => {
     }
 
     return (
-        <View style={{ flex: 1, marginVertical: 12 }}>
-
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ flexGrow: 1, marginVertical: 12 }}
+        >
             {participantCount > 1 &&
                 <>
                     {participantCount > 2
@@ -223,11 +223,11 @@ const ConfrenceMeetingParticipants = () => {
             {participantCount <= 1 &&
                 <LocalViewContainer participantId={participantIds[0]} />
             }
-        </View>
+        </ScrollView>
     )
 }
 
-const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIcon }) => {
+const PublicChatAndParticipantListViewerSheet = ({ show, hide, participantSheetOption, onPressChatIcon }) => {
     const { participants, localParticipant } = useMeeting()
 
     const allParticipantIds = [...participants.keys()]
@@ -242,7 +242,8 @@ const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIc
             title={isChat ? 'Chat' : undefined}
             visible={show}
             onClose={hide}
-            childrenStyle={{ padding: isChat ? 16 : 0 }}
+            height={isChat ? 400 : 300}
+            customStyles={{ paddingHorizontal: isChat ? 20 : 0 }}
         >
             {participantSheetOption === "CHAT"
                 ? <ChatViewer />
@@ -259,105 +260,96 @@ const ChatBottomComponent = ({ show, hide, participantSheetOption, onPressChatIc
 }
 
 const PrivateChatSheet = ({ show, hide, participantId }) => {
-
     const [isSending, setIsSending] = useState(false);
 
+    const [message, setMessage] = useState("");
 
     const { displayName } = useParticipant(participantId);
-
-    return (
-        <BottomSheet
-            title={`Chat with ${displayName}`}
-            visible={show}
-            onClose={hide}
-            childrenStyle={{ padding: 16 }}
-        >
-            <PublicChatSheet {...{ isSending, participantId }} />
-        </BottomSheet>
-    )
-}
-
-const PublicChatSheet = ({ isSending, participantId }) => {
-
+    const mMeeting = useMeeting({});
     const flatListRef = useRef();
 
     const { publish, messages } = usePubSub("CHAT", {
         onMessageReceived: (message) => {
-            console.log("message", message);
+            // console.log("message", message);
         },
         onOldMessagesReceived: (messages) => {
-            console.log("messages", messages);
+            // console.log("messages", messages);
         }
     });
 
-    const [message, setMessage] = useState("");
-
-    const mMeeting = useMeeting({});
     const localParticipantId = mMeeting?.localParticipant?.id;
 
     const handleSendMessage = () => {
-        publish(message, { persist: true, sendOnly: [participantId] }, { isPrivateMessage: true });
+        publish(message, { persist: true, sendOnly: [participantId] }, { isPrivateMessage: true, sendOnly: [participantId, localParticipantId] });
         setMessage("")
-        setTimeout(() => {
-            scrollToBottom();
-        }, 100);
+        setTimeout(() => { scrollToBottom(); }, 300);
     };
 
     const scrollToBottom = () => {
         flatListRef.current.scrollToEnd({ animated: true });
     };
 
+    const filterMessages = messages.filter(message => {
+        if (message?.payload?.sendOnly) {
+            return (
+                message?.payload?.sendOnly.includes(localParticipantId) &&
+                message?.payload?.sendOnly.includes(participantId) && message?.payload?.isPrivateMessage
+            );
+        }
+        return message.senderId == localParticipantId && message?.payload?.isPrivateMessage
+    })
+
     return (
-        <View style={{ flex: 1 }}>
-            <CustomKeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? 'padding' : null}
-            >
-                <FlatList
-                    ref={flatListRef}
-                    data={messages.filter(m => m?.payload?.isPrivateMessage)}
-                    keyExtractor={(_, index) => `${index}_message_list`}
-                    style={{ marginVertical: 5 }}
-                    scrollEnabled={false}
-                    keyboardShouldPersistTaps={'handled'}
-                    showsVerticalScrollIndicator={false}
-                    renderItem={({ item, index }) => {
+        <BottomSheet
+            visible={show}
+            onClose={hide}
+            height={400}
+            customStyles={{ paddingHorizontal: 20, }}
+            title={`Chat with ${displayName}`}
+        >
+            <FlatList
+                ref={flatListRef}
+                data={filterMessages}
+                style={{ marginVertical: 5 }}
+                contentContainerStyle={{ flexGrow: 1 }}
+                keyboardShouldPersistTaps={'handled'}
+                showsVerticalScrollIndicator={false}
+                keyExtractor={(_, index) => `${index}_message_list`}
+                renderItem={({ item, index }) => {
 
-                        const { message, senderId, timestamp, senderName } = item;
-                        const localSender = localParticipantId === senderId;
-                        const time = moment(timestamp).format("hh:mm a");
+                    const { message, senderId, timestamp, senderName } = item;
+                    const localSender = localParticipantId === senderId;
+                    const time = moment(timestamp).format("hh:mm a");
 
-                        return (
-                            <View
-                                key={index}
-                                style={{
-                                    backgroundColor: colors.primary[600],
-                                    paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
-                                    borderRadius: 4, borderRadius: 10, marginHorizontal: 12,
-                                    alignSelf: localSender ? "flex-end" : "flex-start",
-                                }}
+                    return (
+                        <View
+                            key={index}
+                            style={{
+                                backgroundColor: colors.primary[600],
+                                paddingVertical: 8, paddingHorizontal: 10, marginVertical: 6,
+                                borderRadius: 10, marginHorizontal: 12,
+                                alignSelf: localSender ? "flex-end" : "flex-start",
+                            }}
+                        >
+                            <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
+                                {localSender ? "You" : senderName}
+                            </Text>
+                            <Hyperlink
+                                linkDefault={true}
+                                onPress={(url) => Linking.openURL(url)}
+                                linkStyle={{ color: "blue" }}
                             >
-                                <Text style={{ fontSize: 12, color: "#9A9FA5", fontWeight: "bold" }} >
-                                    {localSender ? "You" : senderName}
+                                <Text style={{ fontSize: 14, color: "white", }}>
+                                    {message}
                                 </Text>
-                                <Hyperlink
-                                    linkDefault={true}
-                                    onPress={(url) => Linking.openURL(url)}
-                                    linkStyle={{ color: "blue" }}
-                                >
-                                    <Text style={{ fontSize: 14, color: "white", }}>
-                                        {message}
-                                    </Text>
-                                </Hyperlink>
-                                <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
-                                    {time}
-                                </Text>
-                            </View>
-                        )
-
-                    }}
-                />
-
-            </CustomKeyboardAvoidingView>
+                            </Hyperlink>
+                            <Text style={{ color: "grey", fontSize: 10, alignSelf: "flex-end", marginTop: 4 }}>
+                                {time}
+                            </Text>
+                        </View>
+                    )
+                }}
+            />
 
             <TextInputContainer
                 message={message}
@@ -365,9 +357,8 @@ const PublicChatSheet = ({ isSending, participantId }) => {
                 isSending={isSending}
                 sendMessage={handleSendMessage}
             />
-        </View>
+        </BottomSheet>
     )
-
 }
 
 export default ConferenceMeetingViewer

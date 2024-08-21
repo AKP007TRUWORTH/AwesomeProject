@@ -5,11 +5,11 @@ import colors from '../../styles/colors'
 import { ScreenShare } from '../../assets/icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
-const LocalParticipantPresenter = () => {
+const LocalParticipantPresenter = ({ containerStyle }) => {
     const { disableScreenShare } = useMeeting()
 
     return (
-        <View style={{ flex: 3, backgroundColor: colors.primary[800], justifyContent: 'center', borderRadius: 8, margin: 4 }}>
+        <View style={{ flex: 1, backgroundColor: colors.primary[800], justifyContent: 'center', borderRadius: 8, margin: 4, ...containerStyle }}>
             <View style={{ alignItems: 'center' }}>
                 <ScreenShare width={40} height={40} fill={'black'} />
                 <Text style={{ color: 'white', fontSize: 14, marginVertical: 12 }}>

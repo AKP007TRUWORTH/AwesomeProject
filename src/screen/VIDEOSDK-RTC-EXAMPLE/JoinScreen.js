@@ -13,8 +13,8 @@ import { isIphoneX } from '../../helpers/iPhoneX'
 
 import CustomKeyboardAvoidingView from '../../components/CustomKeyboardAvoidingView'
 import TextInputContainer from './components/TextInputContainer'
-import BottomSheet from './components/BottomSheet'
-import Button from './components/Button'
+import { BottomSheet } from './components/BottomSheet'
+import { Button } from './components/Button'
 import colors from './styles/colors'
 import _ from 'lodash'
 
@@ -69,7 +69,7 @@ const JoinScreen = () => {
     return (
         <Layout style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <CustomKeyboardAvoidingView
-                behavior={Platform.OS == "ios" ? 'padding' : null}
+                behavior={Platform.OS == "ios" ? 'padding' : 'height'}
             >
                 <ScrollView
                     showsVerticalScrollIndicator={false}
@@ -135,7 +135,6 @@ const HeaderViewComponent = ({ setFacingMode, disposeVideoTrack, setAudioList, t
             </Pressable>
         )
     }
-
 
     const options = [
         {

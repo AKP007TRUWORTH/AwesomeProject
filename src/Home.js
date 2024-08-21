@@ -1,7 +1,8 @@
 import { Text, View, Alert } from 'react-native'
-import { Button } from '@ui-kitten/components'
-import React from 'react'
 import * as Updates from 'expo-updates'
+import React from 'react'
+
+import { Button } from './screen/VIDEOSDK-RTC-EXAMPLE/components/Button'
 
 const Home = ({ navigation }) => {
 
@@ -37,20 +38,21 @@ const Home = ({ navigation }) => {
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Button
-                activeOpacity={0.8}
-                onPress={checkForUpdates} >
-                Check For Update
-            </Button>
+                text='Check For Update'
+                onPress={checkForUpdates}
+                apperence={'outline'}
+            />
+
             <Text style={{ color: 'black', fontSize: 20, fontWeight: '500', marginVertical: 20 }}>
                 Code push version 2.0 🚀
             </Text>
+
             <Button
-                activeOpacity={0.8}
+                text='Check out the Video SDK Live 🎦 package by clicking here!'
                 onPress={() => navigation.navigate('VideoSdkNavigator')}
-            >
-                Video package work Click me! 🎥
-            </Button>
-        </View >
+                apperence={'outline'}
+            />
+        </View>
     )
 }
 
