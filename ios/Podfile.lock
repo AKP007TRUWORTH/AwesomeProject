@@ -110,6 +110,10 @@ PODS:
   - hermes-engine/Pre-built (0.71.14)
   - JitsiWebRTC (118.0.0)
   - libevent (2.1.12)
+  - lottie-ios (4.4.1)
+  - lottie-react-native (6.7.2):
+    - lottie-ios (= 4.4.1)
+    - React-Core
   - OpenSSL-Universal (1.1.1100)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -364,6 +368,9 @@ PODS:
     - glog
   - react-native-safe-area-context (4.10.3):
     - React-Core
+  - react-native-simple-toast (3.3.1):
+    - React-Core
+    - Toast (~> 4)
   - react-native-webrtc (0.0.11):
     - JitsiWebRTC (~> 118.0.0)
     - React-Core
@@ -453,6 +460,9 @@ PODS:
     - React-perflogger (= 0.71.14)
   - ReactNativeIncallManager (0.1.3):
     - React-Core
+  - RNGestureHandler (2.16.2):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - RNScreens (3.31.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -460,6 +470,7 @@ PODS:
   - RNSVG (15.3.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - Toast (4.1.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -506,6 +517,7 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
+  - lottie-react-native (from `../node_modules/lottie-react-native`)
   - OpenSSL-Universal (= 1.1.1100)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -524,6 +536,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - "react-native-webrtc (from `../node_modules/@videosdk.live/react-native-webrtc`)"
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -539,6 +552,7 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "ReactNativeIncallManager (from `../node_modules/@videosdk.live/react-native-incallmanager`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -559,8 +573,10 @@ SPEC REPOS:
     - fmt
     - JitsiWebRTC
     - libevent
+    - lottie-ios
     - OpenSSL-Universal
     - SocketRocket
+    - Toast
     - YogaKit
 
 EXTERNAL SOURCES:
@@ -602,6 +618,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
+  lottie-react-native:
+    :path: "../node_modules/lottie-react-native"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -632,6 +650,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-simple-toast:
+    :path: "../node_modules/react-native-simple-toast"
   react-native-webrtc:
     :path: "../node_modules/@videosdk.live/react-native-webrtc"
   React-perflogger:
@@ -662,6 +682,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeIncallManager:
     :path: "../node_modules/@videosdk.live/react-native-incallmanager"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../node_modules/react-native-screens"
   RNSVG:
@@ -703,6 +725,8 @@ SPEC CHECKSUMS:
   hermes-engine: d7cc127932c89c53374452d6f93473f1970d8e88
   JitsiWebRTC: 3a41671ef65a51d7204323814b055a2690b921c7
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  lottie-ios: e047b1d2e6239b787cc5e9755b988869cf190494
+  lottie-react-native: 17547b2f3c7034e2ae8672833fdb63262164d18a
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: e9df143e880d0e879e7a498dc06923d728809c79
@@ -719,6 +743,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 7bf923954b4e035f494b01ac16633963412660d7
   React-logger: 655ff5db8bd922acfbe76a4983ffab048916343e
   react-native-safe-area-context: b01d8f42d4e62a7be5a3e69fd332e0c7e67584c7
+  react-native-simple-toast: 1f1cc551d419bc0ab05dcb0136554006c274789d
   react-native-webrtc: ab10f160de285535bd0fefb504c71b1240106326
   React-perflogger: 4987ad83731c23d11813c84263963b0d3028c966
   React-RCTActionSheet: 5ad952b2a9740d87a5bd77280c4bc23f6f89ea0c
@@ -734,12 +759,14 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: ffe826b7b1cfbc32a35ed5b64d5886c0ff75f501
   ReactCommon: 7f3dd5e98a9ec627c6b03d26c062bf37ea9fc888
   ReactNativeIncallManager: 70612310abc6c15be975054e4e43ff60cad77246
+  RNGestureHandler: d678f94a8f74de70ce3d9f5d23eb0f97b686e943
   RNScreens: 93ae3be2f119d955620f9bbb39ad372adb53b7a9
   RNSVG: a48668fd382115bc89761ce291a81c4ca5f2fd2e
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   Yoga: e71803b4c1fff832ccf9b92541e00f9b873119b9
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
 PODFILE CHECKSUM: 13df342b980a9a654f7af7824027f996d8d5ba6c
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2
